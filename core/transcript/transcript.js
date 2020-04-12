@@ -88,6 +88,19 @@ myJSON.log.entries.forEach((element, index) => {
                         }
                     });
                 }
+
+                converter.convert(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
+                    try {
+                        fs.writeFileSync(fileName, srt);
+                        console.log("Completed output for " + fileName);
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                });
+
+
+
+
             });
 
 
