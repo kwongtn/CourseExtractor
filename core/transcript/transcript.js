@@ -68,6 +68,11 @@ myJSON.log.entries.forEach((element, index) => {
                     fileName = fileName.concat("0" + index);
                 } else {
                     fileName = fileName.concat(index);
+                }
+
+                fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-") + ".srt");
+                fileName = fileName.replace("?", "").replace(":", " - ");
+
                 var transcript = "";
 
                 await item.segments.forEach((segment) => {
