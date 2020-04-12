@@ -5,7 +5,7 @@ courseInfo = JSON.parse(courseInfo);
 
 var text = "Extracted using the CourseExtractor script by flyingdragon of BlackPearl.\n";
 text += "============================================================================\n";
-text += courseInfo.title + " by ";
+text += "Pluralsight - " + courseInfo.title + " by ";
 
 // Generating authors to put in title
 courseInfo.authors.forEach((author, index) => {
@@ -32,13 +32,13 @@ courseInfo.modules.forEach((module, moduleIndex) => {
     module.clips.forEach((clip, index) => {
         if((index + 1) == module.clips.length){
             if((moduleIndex + 1) == courseInfo.modules.length){
-                text += "└└ " + clip.title + "\n";    
+                text += "└ └ " + clip.title + "\n";    
             } else {
-                text += "│└ " + clip.title + "\n";
+                text += "│ └ " + clip.title + "\n";
                 text += "│\n"
             }
         } else {
-            text += "│├ " + clip.title + "\n";
+            text += "│ ├ " + clip.title + "\n";
         }
     });
 });
@@ -48,7 +48,14 @@ text += "=======================================================================
 text += "Author Information\n";
 courseInfo.authors.forEach((author, index) => {
     text += author.displayName + "\n";
-    text += author.bio + "\n";
+    text += author.bio + "\n\n";
+});
+
+// Generating course skillpath information
+text += "============================================================================\n";
+text += "Skillpath Information\n";
+courseInfo.skillPaths.forEach((skillPath, index) => {
+    text += "- " + skillPath.title + "\n";
 });
 
 try {
