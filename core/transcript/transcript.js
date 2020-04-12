@@ -12,3 +12,21 @@ try {
 } catch (err) {
     console.log(err.message);
 }
+
+myJSON.log.entries.forEach((element, index) => {
+    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/user\/courses.*transcript/
+    if (searchString.test(element.request.url)) {
+        var transcript = JSON.parse(element.response.content.text);
+        // console.log(transcript);
+
+        // Create output directory if it doesn't exist
+        if (!fs.existsSync("./transcriptOutput")) {
+            try {
+                fs.mkdirSync("./transcriptOutput");
+            } catch (err) {
+                console.log(err.message);
+            }
+        }
+});
+
+
