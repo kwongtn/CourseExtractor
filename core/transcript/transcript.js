@@ -34,7 +34,14 @@ myJSON.log.entries.forEach((element, index) => {
             var folderName = "./transcriptOutput/";
 
             // Generate folder name.
+            if(courseIndex < 10){
+                folderName = folderName.concat("0" + courseIndex);
+            } else {
                 folderName = folderName.concat(courseIndex);
+            }
+
+            folderName = folderName + " - " + element.title;
+
             // Generate folder
             if (!fs.existsSync(folderName)) {
                 try {
@@ -48,7 +55,18 @@ myJSON.log.entries.forEach((element, index) => {
             element.clips.forEach(async (item, index) => {
                 // Generate file name
                 var fileName = folderName.concat("/");
+                
+                // Check for course index
+                if (courseIndex < 10){
+                    fileName = fileName.concat("0" + courseIndex + "." );
+                } else {
                     fileName = fileName.concat(courseIndex + "." );
+                }
+
+                // Check for class index
+                if (index < 10){
+                    fileName = fileName.concat("0" + index);
+                } else {
                     fileName = fileName.concat(index);
                 var transcript = "";
 
