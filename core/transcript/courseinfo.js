@@ -51,4 +51,9 @@ courseInfo.authors.forEach((author, index) => {
     text += author.bio + "\n";
 });
 
-console.log(text);
+try {
+    fs.writeFileSync("./courseInfo" + courseInfo.id + ".txt", text);
+    console.log("Completed course output for " + courseInfo.id);
+} catch (err) {
+    console.log(err.message);
+}
