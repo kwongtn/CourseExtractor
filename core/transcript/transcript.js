@@ -2,111 +2,114 @@ const https = require('https');
 const fs = require('fs');
 const converter = require('./converter');
 
-var myJSON;
 const DEBUG = false;
 
-// Read the HAR file
-try {
-    myJSON = JSON.parse(fs.readFileSync("./app.pluralsight.com_transcript.har"));
-    // console.log(myJSON);
-} catch (err) {
-    console.log(err.message);
-}
+/**
+ * 
+ * @param {Object} myJSON - The JSON containing the transcript.
+ * @param {boolean} getSRT - Whether to get srt files.
+ */
+function transcript(myJSON, getSRT = true) {
+    // Create output directory if it doesn't exist
+    if (!fs.existsSync("./output/transcript")) {
+        try {
+            fs.mkdirSync("./output/transcript");
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
-myJSON.log.entries.forEach((element, index) => {
-    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/user\/courses.*transcript/
-    if (searchString.test(element.request.url)) {
-        var transcript = JSON.parse(element.response.content.text);
-        // console.log(transcript);
+    myJSON.modules.forEach((element, index) => {
+        // Output transcript based on folder
+        var courseIndex = ++index;
+        var folderName = "./output/transcript/";
 
-        // Create output directory if it doesn't exist
-        if (!fs.existsSync("./transcriptOutput")) {
+        // Generate folder name.
+        if (courseIndex < 10) {
+            folderName = folderName.concat("0" + courseIndex);
+        } else {
+            folderName = folderName.concat(courseIndex);
+        }
+
+        folderName = folderName + " - " + element.title;
+
+        // Generate folder
+        if (!fs.existsSync(folderName)) {
             try {
-                fs.mkdirSync("./transcriptOutput");
+                fs.mkdirSync(folderName);
             } catch (err) {
                 console.log(err.message);
             }
         }
 
-        transcript.modules.forEach((element, index) => {
-            // Output transcript based on folder
-            var courseIndex = ++index;
-            var folderName = "./transcriptOutput/";
+        // Output the transcript file.
+        element.clips.forEach(async (item, index) => {
+            // Generate file name
+            var fileName = folderName.concat("/");
 
-            // Generate folder name.
-            if(courseIndex < 10){
-                folderName = folderName.concat("0" + courseIndex);
+            // Check for course index
+            if (courseIndex < 10) {
+                fileName = fileName.concat("0" + courseIndex + ".");
             } else {
-                folderName = folderName.concat(courseIndex);
+                fileName = fileName.concat(courseIndex + ".");
             }
 
-            folderName = folderName + " - " + element.title;
-
-            // Generate folder
-            if (!fs.existsSync(folderName)) {
-                try {
-                    fs.mkdirSync(folderName);
-                } catch (err) {
-                    console.log(err.message);
-                }
+            // Check for class index
+            if (index < 10) {
+                fileName = fileName.concat("0" + index);
+            } else {
+                fileName = fileName.concat(index);
             }
 
-            // Output the transcript file.
-            element.clips.forEach(async (item, index) => {
-                // Generate file name
-                var fileName = folderName.concat("/");
-                
-                // Check for course index
-                if (courseIndex < 10){
-                    fileName = fileName.concat("0" + courseIndex + "." );
-                } else {
-                    fileName = fileName.concat(courseIndex + "." );
-                }
+            fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-") + ".srt");
+            fileName = fileName.replace("?", "").replace(":", " - ");
 
-                // Check for class index
-                if (index < 10){
-                    fileName = fileName.concat("0" + index);
-                } else {
-                    fileName = fileName.concat(index);
-                }
+            var transcript = "";
 
-                fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-") + ".srt");
-                fileName = fileName.replace("?", "").replace(":", " - ");
+            await item.segments.forEach((segment) => {
 
-                var transcript = "";
+                const text = "[00:" + Math.abs(segment.displayTime) + "] " + segment.text + "\n";
+                transcript += text;
+            });
 
-                await item.segments.forEach((segment) => {
-
-                    const text = "[00:" + Math.abs(segment.displayTime) + "] " + segment.text + "\n";
-                    transcript += text;
+            if (DEBUG) {
+                fs.appendFile(fileName + ".debug", transcript, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
                 });
+            }
 
-                if (DEBUG) {
-                    fs.appendFile(fileName + ".debug", transcript, (err) => {
-                        if (err) {
-                            console.log(err.message);
-                        }
-                    });
-                }
-
+            if (getSRT) {
                 converter.convert(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
                     try {
                         fs.writeFileSync(fileName, srt);
                         console.log("Completed output for " + fileName);
                     } catch (err) {
-                        console.log(err.message);
+                        console.log(err);
                     }
                 });
-
-
-
-
-            });
-
-
-
+            } else {
+                console.log("Transcript generation ignored for " + fileName);
+            }
         });
+
+    });
+
+
+}
+
+
+/**
+ * @param {Object} jsonFile - Pass the HAR file in JSON format.
+ * @param {boolean} getSRT - Whether to get the SRT files.
+ */
+module.exports.generateTranscript = async (jsonFile, getSRT = true) => {
+    try {
+        await transcript(jsonFile, getSRT);
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
     }
-});
-
-
+}
