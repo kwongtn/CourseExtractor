@@ -1,4 +1,4 @@
-const transcript = require("./transcript/transcript.js");
+const transcript = require("./functions/transcript.js");
 const fs = require("fs");
 
 var myJSON;

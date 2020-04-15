@@ -13,6 +13,10 @@ var options = {
     'maxRedirects': 20
 };
 
+/**
+ * Converts LRC files to srt via [toolslick.com](toolslick.com)
+ * @param {string} bodyText - LRC file as string.
+ */
 function convert(bodyText) {
     return new Promise((resolve, reject) => {
         var srt = new String();
