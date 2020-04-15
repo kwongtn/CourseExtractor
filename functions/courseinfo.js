@@ -220,7 +220,7 @@ courseReader("./courseinfo.json").then(courseInfo => {
     // Generate and write courseInfo
     courseInfoGenerator(courseInfo).then(resolved => {
         try {
-            fs.writeFileSync("./courseInfo_" + resolved.courseInfo.id + ".txt", resolved.text);
+            fs.writeFileSync("./output/courseInfo_" + resolved.courseInfo.id + ".txt", resolved.text);
             console.log("Completed course output for " + resolved.courseInfo.id);
         } catch (err) {
             console.log(err);
@@ -233,7 +233,7 @@ courseReader("./courseinfo.json").then(courseInfo => {
     // Generate and write courseInfo bb code. Designed for Blackpearl
     courseInfoBbCodeGenerator(courseInfo).then(resolved => {
         try {
-            fs.writeFileSync("./courseBb_" + resolved.courseInfo.id + ".txt", resolved.text);
+            fs.writeFileSync("./output/courseBb_" + resolved.courseInfo.id + ".txt", resolved.text);
             console.log("Completed bb text output for " + resolved.courseInfo.id);
         } catch (err) {
             console.log(err);
