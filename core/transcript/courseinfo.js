@@ -165,15 +165,91 @@ function courseInfoGenerator(courseInfo) {
         reject("Error");
     });
 }
+
+function courseInfoBbCodeGenerator(courseInfo) {
+    var text = "";
+    return new Promise((resolve, reject) => {
+        text += heading(courseInfo).concat("\n\n");
+
+        // Add course images
+        text += "[IMG width=\"500px\"]https://i.imgur.com/Cm7NPR0.png[/IMG]\n";
+        text += "[IMG width=\"500px\"]" + courseInfo.courseImageUrl + "[/IMG]\n";
+        text += "\n";
+
+        // Add course title
+        text += "[B][U]" + heading(courseInfo, false, false) + "[/B][/U]\n\n";
+
+        // Add course description
+        text += "[B][U]Course Description[/B][/U]\n";
+        text += courseDesc(courseInfo) + "\n";
+        
+        // Add course link
+        text += "[B][U]Course Link[/B][/U]\n"
+        text += courseURL(courseInfo) + "\n";
+
+        // Add course structure
+        text += "[B][U]Course Structure[/B][/U]\n[SPOILER=\"Course Structure\"]\n";
+        text += moduleList(courseInfo.title, courseInfo.modules);
+        text += "[/SPOILER]\n\n";
+
+        // Add author information
+        text += "[B][U]Author Information[/B][/U]\n[SPOILER=\"Author Information\"]\n";
+        text += authorDetails(courseInfo.authors);
+        text += "[/SPOILER]\n\n";
+
+        // Add PuralSight Skillpath information
+        text += "[B][U]Skillpath Information[/B][/U]\n";
+        text += skillPathInfo(courseInfo.skillPaths, false);
+        text += "[/SPOILER]\n\n";
+
+        // Add download link section
+        text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
+        text += "REMEMBER TO INSERT THE LINK HERE!!!!!!!!!!!!\n";
+        text += "[/DOWNCLOUD]\n[/HIDEREACT]"
+
+        const returnList = {
+            "text": text,
+            "courseInfo": courseInfo
+        };
+
+        resolve(returnList);
+    });
+}
+
+courseReader("./courseinfo.json").then(courseInfo => {
+    // Generate and write courseInfo
+    courseInfoGenerator(courseInfo).then(resolved => {
+        try {
+            fs.writeFileSync("./courseInfo_" + resolved.courseInfo.id + ".txt", resolved.text);
+            console.log("Completed course output for " + resolved.courseInfo.id);
+        } catch (err) {
+            console.log(err);
+            return false;
         }
+        
+        return true;
+    });
+    
+    // Generate and write courseInfo bb code. Designed for Blackpearl
+    courseInfoBbCodeGenerator(courseInfo).then(resolved => {
+        try {
+            fs.writeFileSync("./courseBb_" + resolved.courseInfo.id + ".txt", resolved.text);
+            console.log("Completed bb text output for " + resolved.courseInfo.id);
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+        
+        return true;
     });
 
 });
 
 
-try {
-    fs.writeFileSync("./courseInfo" + courseInfo.id + ".txt", text);
-    console.log("Completed course output for " + courseInfo.id);
-} catch (err) {
-    console.log(err.message);
+module.exports.courseInfoTxt = (courseInfo) => {
+    return courseInfoGenerator(courseInfo);
+}
+
+module.exports.courseInfoBbCode = (courseInfo) => {
+    return courseInfoBbCodeGenerator(courseInfo);
 }
