@@ -110,13 +110,14 @@ if (!params.noBB) {
 // Generate and write video URLs to output
 if(!params.noVideo){
     const searchString = /https:\/\/app.pluralsight.com\/video\/clips\/v3\/viewclip.*/;
+    fs.writeFileSync("./output/urls.txt", "");
     try{
         myJSON.log.entries.forEach((element, index) => {
         if (searchString.test(element.request.url)) {
             const passedJSON = JSON.parse(element.response.content.text);
             videoLinks.urls(passedJSON).then((output) => {
                 try {
-                    fs.writeFileSync("./output/urls.txt", output);
+                    fs.appendFileSync("./output/urls.txt", output);
                     console.log("Completed url output.");
                 } catch (err) {
                     console.log(err);
