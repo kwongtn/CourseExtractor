@@ -6,7 +6,7 @@
 function getURLs(linkJSON, extractAll = false){
     var text = "";
     if(!extractAll){
-        text += linkJSON.urls[0].url;
+        text += linkJSON.urls[0].url + "\n";
     } else {
         console.log("Extracting all URLs.");
         linkJSON.urls.forEach((element, index) => {
