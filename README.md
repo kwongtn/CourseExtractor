@@ -33,11 +33,7 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
 1. You may now export the HAL file and close the Developer Tool window.
 1. Run the program with the following command: 
     ```
-    node ./main.js --noVideo path_to_HAL_file
-    ```
-    If you did not do the transcripts part, do the following command instead:
-    ```
-    node ./main.js --noVideo --noSubs path_to_HAL_file
+    node ./main.js path_to_HAL_file
     ```
 1. The outputs should be in the `./output` directory.
 
@@ -51,7 +47,7 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
 1. You may now export the HAL file and close the Developer Tool window.
 1. Run the program with the following command:
     ```
-    node ./main.js --noSubs --noInfo --noBB path_to_HAL_file
+    node ./main.js path_to_HAL_file
     ```
 1. An output of all the video URLs will be in the `./output` directory.
 1. Copy the links and paste into any downloader (or browser window) to download the videos. Do note that you would need to manually rename the files.
