@@ -85,7 +85,7 @@ if (!params.noBB) {
         myJSON.log.entries.forEach((element, index) => {
             if (!obtainedCourseInfoBb && searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
-                courseInfo.courseInfoTxt(passedJSON).then((output) => {
+                courseInfo.courseInfoBbCode(passedJSON).then((output) => {
                     try {
                         fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
                         console.log("Completed bb text output for " + output.courseInfo.id);
