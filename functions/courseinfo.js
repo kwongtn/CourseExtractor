@@ -166,6 +166,10 @@ function courseInfoGenerator(courseInfo) {
     });
 }
 
+/**
+ * Generates BB code suitable for posting in BlackPearl.
+ * @param {Object} courseInfo - Course info as JSON object.
+ */
 function courseInfoBbCodeGenerator(courseInfo) {
     var text = "";
     return new Promise((resolve, reject) => {
@@ -216,6 +220,7 @@ function courseInfoBbCodeGenerator(courseInfo) {
     });
 }
 
+/**
 courseReader("./courseinfo.json").then(courseInfo => {
     // Generate and write courseInfo
     courseInfoGenerator(courseInfo).then(resolved => {
@@ -244,12 +249,18 @@ courseReader("./courseinfo.json").then(courseInfo => {
     });
 
 });
+*/
 
-
+/**
+ * @param {Object} courseInfo
+ */
 module.exports.courseInfoTxt = (courseInfo) => {
     return courseInfoGenerator(courseInfo);
 }
 
+/**
+ * @param {Object} courseInfo
+ */
 module.exports.courseInfoBbCode = (courseInfo) => {
     return courseInfoBbCodeGenerator(courseInfo);
 }

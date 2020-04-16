@@ -49,7 +49,9 @@ function convert(bodyText) {
 
 }
 
-
+/**
+ * @param {string} body - LRC file as string.
+ */
 module.exports.convert = (body) => {
     return new Promise((resolve, reject) => {
         resolve(convert(body));
