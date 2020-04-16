@@ -1,31 +1,27 @@
-var fs = require('fs');
+/**
+ * 
+ * @param {Object} linkJSON - JSON containing all video links.
+ * @param {boolean} extractAll - Whether to output all possible URLs
+ */
+function getURLs(linkJSON, extractAll = false){
+    var text = "";
+    if(!extractAll){
+        text += linkJSON.urls[0].url;
+    } else {
+        console.log("Extracting all URLs.");
+        linkJSON.urls.forEach((element, index) => {
+            text += element.url;
+        })
+    }
 
-var myJSON;
-const EXTRACT_ALL = false;
-
-try {
-    myJSON = JSON.parse(fs.readFileSync("./app.pluralsight.com_video.har"));
-} catch (err) {
-    console.log(err.message);
+    return text;
 }
 
-myJSON.log.entries.forEach((element, index) => {
-    if (element.request.url == "https://app.pluralsight.com/video/clips/v3/viewclip") {
-        var videoJSON = JSON.parse(element.response.content.text);
-
-        if (!EXTRACT_ALL) {
-            // Extract first URL
-            console.log(videoJSON.urls[0].url);
-
-        } else {
-            // Extract all possible URLs
-            videoJSON.urls.forEach((element, index) => {
-                console.log(element.url);
-            });
-
-        }
-
-    }
-});
-
-
+/**
+ * @param {Object} linkJSON - JSON containing all video links.
+ */
+module.exports.urls = (videoJSON) => {
+    return new Promise((resolve, reject) => {
+        resolve(getURLs(videoJSON));
+    })
+}

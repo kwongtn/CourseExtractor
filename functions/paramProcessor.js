@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const notLast = [
-    "--noSubs", "--noInfo", "--noBB"
+    "--noSubs", "--noInfo", "--noBB", "--noVideo"
 ]
 
 /**
@@ -13,7 +13,8 @@ function paramsProcess(params) {
         "path": params[params.length - 1],
         "noSubs": false,
         "noInfo": false,
-        "noBB": false
+        "noBB": false,
+        "noVideo": false
     };
 
     params.forEach((value, index) => {
@@ -44,6 +45,11 @@ function paramsProcess(params) {
                 break;
             }
 
+            case "--noVideo": {
+                keys.noVideo = true;
+                break;
+            }
+
             default:
                 break;
         }
@@ -61,7 +67,8 @@ function helpText() {
         "\t--license\tOutputs the license of this project. (GNU General Public License)\n",
         "\t--noSubs\tDisables output of subtitles.\n",
         "\t--noInfo\tDisables output of course information.\n",
-        "\t--noBB\t\tDisables output of BB code.\n\n",
+        "\t--noBB\t\tDisables output of BB code.\n",
+        "\t--noVideo\tDisables output of video URLs.\n\n",
         "\rProudly presented to you by flyingdragon of BlackPearl. Licensed under the GNU General Public License v3.\n",
         "\rPRs welcome at https://github.com/kwongtn/CourseExtractor \n\n",
         "\rIf there are any issues, please open an issue at https://github.com/kwongtn/CourseExtractor/issues .",
@@ -70,6 +77,7 @@ function helpText() {
     process.exit();
 }
 
+/**
 if (process.argv.length < 3) {
     helpText();
     process.exit();
@@ -84,13 +92,13 @@ if (process.argv.length < 3) {
 
     console.log(paramsProcess(process.argv));
 }
+*/
 
 /**
  * @param {array} params
  */
 module.exports.parse = (params) => {
     if (params.length < 3) {
-        console.log("helpText");
         helpText();
 
     } else {
