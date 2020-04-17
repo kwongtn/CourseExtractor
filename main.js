@@ -134,6 +134,11 @@ if (!params.noURL) {
 }
 
 // Video download
+const DOWNLOAD_LIMIT = 5;
+const DOWNLOAD_TIMEOUT = 10;
+var downloadCount = DOWNLOAD_LIMIT;
+var downloadMultiplier = 0;
+
 if (params.videoDownload) {
     console.log("Waiting for 5 sec timeout...");
     setTimeout(() => {
@@ -151,8 +156,19 @@ if (params.videoDownload) {
             console.log("JSON files have the same size. Proceeding to download.");
 
             URLs.forEach(async (url, index) => {
-                console.log("CURL-ing for " + JSON.stringify(fileNames[index]));
-                exec("curl " + url + " --output " + JSON.stringify(fileNames[index]));
+                if(apiCount <= 0){
+                    downloadCount = DOWNLOAD_LIMIT;
+                    downloadMultiplier++;
+                    console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
+                }
+
+                setTimeout(() => {
+                    console.log("CURL-ing for " + JSON.stringify(fileNames[index]));
+                    exec("curl " + url + " --output " + JSON.stringify(fileNames[index]));
+                }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
+
+
+                downloadCount--;
             })
         } else {
             console.log("URL length & fileNames length mismatch, exiting.");

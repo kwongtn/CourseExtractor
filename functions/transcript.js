@@ -2,7 +2,12 @@ const https = require('https');
 const fs = require('fs');
 const converter = require('./converter');
 
+const API_LIMIT = 25;
+const API_TIMEOUT = 60;
 const DEBUG = false;
+
+var apiCount = API_LIMIT;
+var apiMultiplier = 0;
 
 /**
  * 
@@ -88,14 +93,24 @@ function transcript(myJSON, getSRT = true) {
                 }
                 
                 if (getSRT) {
-                    converter.convert(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
-                        try {
-                            fs.writeFileSync(fileName, srt);
-                            console.log("Completed output for " + fileName);
-                        } catch (err) {
-                            console.log(err);
-                        }
-                    });
+                    if(apiCount <= 0){
+                        apiCount = API_LIMIT;
+                        apiMultiplier++;
+                        console.log("API limit reached, timeout of " + (apiMultiplier * API_TIMEOUT) + "seconds set.");
+                    }
+
+                    setTimeout(() => {
+                        converter.convert(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
+                            try {
+                                fs.writeFileSync(fileName, srt);
+                                console.log("Completed output for " + fileName);
+                            } catch (err) {
+                                console.log(err);
+                            }
+                        });
+                    }, apiMultiplier * API_TIMEOUT * 1000);
+
+                    apiCount--;
                 } else {
                     console.log("Transcript generation ignored for " + fileName);
                 }
