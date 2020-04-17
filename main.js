@@ -156,7 +156,7 @@ if (params.videoDownload) {
             console.log("JSON files have the same size. Proceeding to download.");
 
             URLs.forEach(async (url, index) => {
-                if(apiCount <= 0){
+                if(downloadCount <= 0){
                     downloadCount = DOWNLOAD_LIMIT;
                     downloadMultiplier++;
                     console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
