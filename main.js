@@ -1,7 +1,8 @@
 const transcript = require("./functions/transcript.js");
 const courseInfo = require("./functions/courseinfo.js");
 const paramProcessor = require("./functions/paramProcessor.js");
-const videoLinks = require("./functions/videoLinks.js");
+const video = require("./functions/video.js");
+const exec = require("child_process").execSync;
 const fs = require("fs");
 
 var myJSON;
@@ -27,7 +28,7 @@ if (!fs.existsSync("./output")) {
     }
 }
 
-// Generate transcript
+// Generate transcript and video list.
 if (!params.noSubs) {
     const searchString = /https:\/\/app\.pluralsight\.com\/learner\/user\/courses.*transcript/;
     var obtainedTranscript = false
@@ -35,14 +36,16 @@ if (!params.noSubs) {
         myJSON.log.entries.forEach((element, index) => {
             if (!obtainedTranscript && searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
-                transcript.generateTranscript(passedJSON);
+                transcript.generateTranscript(passedJSON).then((videoList) => {
+                    fs.writeFileSync("./output/videoList.json", JSON.stringify(videoList, null, 2));
+                });
                 obtainedTranscript = true;
             }
         });
     } catch (err) {
         console.log(err.message);
         console.log("If you see this its probably because the HAR file you provided does not have a transcript, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAL file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
     }
 }
 
@@ -62,17 +65,17 @@ if (!params.noInfo) {
                         console.log(err);
                         return false;
                     }
-    
+
                     return true;
                 });
-    
+
                 obtainedCourseInfo = true;
             }
         });
-    } catch (err){
+    } catch (err) {
         console.log(err.message);
         console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAL file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
     }
 
 }
@@ -81,7 +84,7 @@ if (!params.noInfo) {
 if (!params.noBB) {
     const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
     var obtainedCourseInfoBb = false;
-    try{
+    try {
         myJSON.log.entries.forEach((element, index) => {
             if (!obtainedCourseInfoBb && searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
@@ -91,47 +94,68 @@ if (!params.noBB) {
                         console.log("Completed bb text output for " + output.courseInfo.id);
                     } catch (err) {
                         console.log(err);
-                        return false;
                     }
-    
-                    return true;
+
                 });
-    
+
                 obtainedCourseInfoBb = true;
             }
         });
-    } catch (err){
-        console.log(err.message);
+    } catch (err) {
+        console.log(err);
         console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAL file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
     }
 }
 
-// Generate and write video URLs to output
-if(!params.noVideo){
-    const searchString = /https:\/\/app.pluralsight.com\/video\/clips\/v3\/viewclip.*/;
-    fs.writeFileSync("./output/urls.txt", "");
-    try{
-        myJSON.log.entries.forEach((element, index) => {
-        if (searchString.test(element.request.url)) {
-            const passedJSON = JSON.parse(element.response.content.text);
-            videoLinks.urls(passedJSON).then((output) => {
-                try {
-                    fs.appendFileSync("./output/urls.txt", output);
-                    console.log("Completed url output.");
-                } catch (err) {
-                    console.log(err);
-                    return false;
-                }
 
-                return true;
-            });
+// Generate and write video URLs to output
+if (!params.noURL) {
+    fs.writeFileSync("./output/urls.json", "");
+
+    var URLs = [];
+
+    video.urls(myJSON).then(links => {
+        try {
+            try {
+                fs.appendFileSync("./output/urls.json", JSON.stringify(links, null, 2));
+                console.log("Completed url output.");
+            } catch (err) {
+                console.log(err.message);
+            }
+        } catch (err) {
+            console.log(err.message);
+            console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
+            console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
         }
-    })
-    } catch (err) {
-        console.log(err.message);
-        console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAL file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
-    }
-    
+    });
+
+
+}
+
+// Video download
+if (params.videoDownload) {
+    console.log("Waiting for 5 sec timeout...");
+    setTimeout(() => {
+        console.log("Wait complete.");
+        const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
+        const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
+
+        // Options for child_process.spawn section
+        const options = {
+            "detached": true,
+            "shell": true
+        }
+
+        if (URLs.length == fileNames.length) {
+            console.log("JSON files have the same size. Proceeding to download.");
+
+            URLs.forEach(async (url, index) => {
+                console.log("CURL-ing for " + JSON.stringify(fileNames[index]));
+                exec("curl " + url + " --output " + JSON.stringify(fileNames[index]));
+            })
+        } else {
+            console.log("URL length & fileNames length mismatch, exiting.");
+        }
+    }, 5000)
 }

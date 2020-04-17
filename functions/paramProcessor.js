@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const notLast = [
-    "--noSubs", "--noInfo", "--noBB", "--noVideo"
+    "--noSubs", "--noInfo", "--noBB", "--noURL"
 ]
 
 /**
@@ -14,7 +14,8 @@ function paramsProcess(params) {
         "noSubs": false,
         "noInfo": false,
         "noBB": false,
-        "noVideo": false
+        "noURL": false,
+        "videoDownload": false
     };
 
     params.forEach((value, index) => {
@@ -45,8 +46,13 @@ function paramsProcess(params) {
                 break;
             }
 
-            case "--noVideo": {
-                keys.noVideo = true;
+            case "--videoDownload": {
+                keys.videoDownload = true;
+                break;
+            }
+
+            case "--noURL": {
+                keys.noURL = true;
                 break;
             }
 
@@ -63,12 +69,13 @@ function paramsProcess(params) {
 function helpText() {
     console.log(
         "\nUsage: node ./main.js [params] path_to_HAL_file\n\n",
-        "\t--help\t\tDisplays this help message.\n",
-        "\t--license\tOutputs the license of this project. (GNU General Public License)\n",
-        "\t--noSubs\tDisables output of subtitles.\n",
-        "\t--noInfo\tDisables output of course information.\n",
-        "\t--noBB\t\tDisables output of BB code.\n",
-        "\t--noVideo\tDisables output of video URLs.\n\n",
+        "\t--help\t\t\tDisplays this help message.\n",
+        "\t--license\t\tOutputs the license of this project. (GNU General Public License)\n",
+        "\t--noSubs\t\tDisables output of subtitles.\n",
+        "\t--noInfo\t\tDisables output of course information.\n",
+        "\t--noBB\t\t\tDisables output of BB code.\n",
+        "\t--videoDownload\t\tDownloads video using filenames as specified in \'./output/videoList.json\'\n",
+        "\t--noURL\t\tDisables output of video URLs.\n\n",
         "\rProudly presented to you by flyingdragon of BlackPearl. Licensed under the GNU General Public License v3.\n",
         "\rPRs welcome at https://github.com/kwongtn/CourseExtractor \n\n",
         "\rIf there are any issues, please open an issue at https://github.com/kwongtn/CourseExtractor/issues .",

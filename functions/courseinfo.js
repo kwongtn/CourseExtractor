@@ -204,7 +204,7 @@ function courseInfoBbCodeGenerator(courseInfo) {
         // Add PuralSight Skillpath information
         text += "[B][U]Skillpath Information[/B][/U]\n";
         text += skillPathInfo(courseInfo.skillPaths, false);
-        text += "[/SPOILER]\n\n";
+        text += "\n";
 
         // Add download link section
         text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
