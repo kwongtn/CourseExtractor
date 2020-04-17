@@ -75,7 +75,7 @@ function heading(courseInfo, company = true, linebreak = true){
     text += courseInfo.title + " by " + authorList(courseInfo, linebreak);
     return text;
 }
-
+  
 /**
  * Generates course list with format
  * @param {string} courseTitle - Title of course.
@@ -124,6 +124,10 @@ function skillPathInfo(skillPaths, header = false){
     });
 
     return text;
+}
+
+function lastUpdate(courseInfo){
+    return courseInfo.updatedOn;
 }
 
 /**
