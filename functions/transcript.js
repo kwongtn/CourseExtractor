@@ -41,7 +41,7 @@ function transcript(myJSON, getSRT = true) {
                 folderName = folderName.concat(courseIndex);
             }
             
-            folderName = folderName + " - " + element.title;
+            folderName = folderName + " - " + element.title.replace(/\//g, "-").replace(/\\/g, "-");
             
             // Generate folder
             if (!fs.existsSync(folderName)) {
