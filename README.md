@@ -19,6 +19,7 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
 ## Prerequisites
 1. Google Chrome (or any other browser that can output HAL files)
 1. NodeJS
+1. cURL (For video downloads)
 1. (Good to have) The [save as file extension](https://chrome.google.com/webstore/detail/save-as-file/iajmdojjjiapknggfnckblngginmjnbe) if you are mass downloading, as you can directly paste the link into the extension without needing to open a new tab.
 
 ## Brief
@@ -49,20 +50,26 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
     ```
     node ./main.js path_to_HAL_file
     ```
-1. An output of all the video URLs will be in the `./output` directory.
-1. Copy the links and paste into any downloader (or browser window) to download the videos. Do note that you would need to manually rename the files.
+    or, if you want to download the videos together too, you can run the following:
+    ```
+    node ./main.js --videoDownload path_to_HAL_file
+    ```
+1. An output of all the video URLs will be in the `./output/videoList.json` file, and if you specified the `--videoDownload` parameter, videos will be downloaded alongside the subtitle files.
+1. <strike> Copy the links and paste into any downloader (or browser window) to download the videos. Do note that you would need to manually rename the files.</strike>
 
 
 ## Parameters
 ```
 Usage: node ./main.js [params] path_to_HAL_file
 
-        --help          Displays this help message.
-        --license       Outputs the license of this project. (GNU General Public License)
-        --noSubs        Disables output of subtitles.
-        --noInfo        Disables output of course information.
-        --noBB          Disables output of BB code.
-        --noVideo       Disables output of video URLs.
+        --help                  Displays this help message.
+        --license               Outputs the license of this project. (GNU General Public License)
+        --noSubs                Disables output of subtitles.
+        --noInfo                Disables output of course information.
+        --noBB                  Disables output of BB code.
+        --videoDownload         Downloads video using filenames as specified in './output/videoList.json'
+        --noURL                 Disables output of video URLs.
+
 ```
 
 # FAQ
@@ -78,7 +85,15 @@ Usage: node ./main.js [params] path_to_HAL_file
 1. What did I learn from this project?\
     Well to start with are HAL file formats and how much information there is in there. Then NodeJS and Promises.
 
+# Issues
+1. API Problem
+    As this repo is using an external service to do conversions for srt files, it limits us as the following:
+    - 30 API calls per minute,
+    - 50 API calls per 5 minutes, and
+    - 100 API calls per hour.
+    I will be putting in a direct converter, so that conversions can be done without having to rely on an external API.
 
+1. It is currently not possible to put `courseInfo` and `transcript` together with `videoLinks`. It will be investigated later on.
 
 # License
 <img align="right" src="http://opensource.org/trademarks/opensource/OSI-Approved-License-100x137.png">
