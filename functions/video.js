@@ -7,18 +7,22 @@ function getURLs(linkJSON, extractAll = false) {
     const searchString = /https:\/\/app.pluralsight.com\/video\/clips\/v3\/viewclip.*/;
     var URLs = [];
     linkJSON.log.entries.forEach((element, index) => {
-        if (searchString.test(element.request.url)) {
-            const passedJSON = JSON.parse(element.response.content.text);
-            
-            if (!extractAll) {
-                URLs.push(passedJSON.urls[0].url);
-            } else {
-                console.log("Extracting all URLs.");
-                passedJSON.urls.forEach((element, index) => {
-                    text += URLs.push(passedJSON.urls[index].url);;
-                })
+        try {
+            if (searchString.test(element.request.url)) {
+                const passedJSON = JSON.parse(element.response.content.text);
+                if (!extractAll) {
+                    URLs.push(passedJSON.urls[0].url);
+                } else {
+                    console.log("Extracting all URLs.");
+                    passedJSON.urls.forEach((urlGroup, index) => {
+                        URLs.push(urlGroup.url);;
+                    })
+                }
+    
             }
-
+        } catch (err) {
+            console.log(err.message);
+            console.log("If you are seeing this, it means that your HAL file was not complete with the video links.");
         }
     });
     

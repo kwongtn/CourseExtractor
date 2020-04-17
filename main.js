@@ -159,11 +159,11 @@ if (params.videoDownload) {
                 if(downloadCount <= 0){
                     downloadCount = DOWNLOAD_LIMIT;
                     downloadMultiplier++;
-                    console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
+                    // console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
                 }
 
                 setTimeout(() => {
-                    console.log("CURL-ing for " + JSON.stringify(fileNames[index]));
+                    console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
                     exec("curl " + url + " --output " + JSON.stringify(fileNames[index]));
                 }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
