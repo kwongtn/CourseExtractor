@@ -36,7 +36,7 @@ if (!params.noSubs) {
         myJSON.log.entries.forEach((element, index) => {
             if (!obtainedTranscript && searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
-                transcript.generateTranscript(passedJSON).then((videoList) => {
+                transcript.local(passedJSON).then((videoList) => {
                     fs.writeFileSync("./output/videoList.json", JSON.stringify(videoList, null, 2));
                 });
                 obtainedTranscript = true;

@@ -86,12 +86,13 @@ Usage: node ./main.js [params] path_to_HAL_file
     Well to start with are HAL file formats and how much information there is in there. Then NodeJS and Promises.
 
 # Issues
-1. API Problem
+1. <strike>API Problem
     As this repo is using an external service to do conversions for srt files, it limits us as the following:
     - 30 API calls per minute,
     - 50 API calls per 5 minutes, and
     - 100 API calls per hour.
-    I will be putting in a direct converter, so that conversions can be done without having to rely on an external API.
+    I will be putting in a direct converter, so that conversions can be done without having to rely on an external API. </strike>
+    Completed coding the in-house converter.
 
 1. It is currently not possible to put `courseInfo` and `transcript` together with `videoLinks`. It will be investigated later on.
 

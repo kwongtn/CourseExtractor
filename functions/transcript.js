@@ -15,11 +15,11 @@ var apiMultiplier = 0;
  * @param {Object} myJSON - The JSON containing the transcript.
  * @param {boolean} getSRT - Whether to get srt files.
  */
-function transcript(myJSON, getSRT = true) {
+function APItranscript(myJSON, getSRT = true) {
     return new Promise((resolve, reject) => {
 
         var videoList = [];
-        
+
         // Create output directory if it doesn't exist
         if (!fs.existsSync("./output/transcript")) {
             try {
@@ -84,16 +84,16 @@ function transcript(myJSON, getSRT = true) {
                         }
                     });
                 }
-                
+
                 if (getSRT) {
-                    if(apiCount <= 0){
+                    if (apiCount <= 0) {
                         apiCount = API_LIMIT;
                         apiMultiplier++;
                         console.log("API limit reached, timeout of " + (apiMultiplier * API_TIMEOUT) + "seconds set.");
                     }
 
                     setTimeout(() => {
-                        converter.convert(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
+                        converter.lrcToSRT(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
                             try {
                                 fs.writeFileSync(fileName, srt);
                                 console.log("Completed output for " + fileName);
@@ -108,7 +108,78 @@ function transcript(myJSON, getSRT = true) {
                     console.log("Transcript generation ignored for " + fileName);
                 }
             });
-            
+
+        });
+
+        resolve(videoList);
+    });
+}
+
+function localTranscript(myJSON, getSRT = true) {
+    return new Promise((resolve, reject) => {
+
+        var videoList = [];
+
+        // Create output directory if it doesn't exist
+        if (!fs.existsSync("./output/transcript")) {
+            try {
+                fs.mkdirSync("./output/transcript");
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        myJSON.modules.forEach((element, index) => {
+
+            // Output transcript based on folder
+            var courseIndex = ++index;
+            var folderName = "./output/transcript/";
+
+            // Generate folder name.
+            folderName = folderName.concat(func.numString(courseIndex));
+
+            folderName = folderName + " - " + element.title.replace(/\//g, "-").replace(/\\/g, "-");
+
+            // Generate folder
+            if (!fs.existsSync(folderName)) {
+                try {
+                    fs.mkdirSync(folderName);
+                } catch (err) {
+                    console.log(err.message);
+                }
+            }
+
+            // Output the transcript file.
+            element.clips.forEach(async (item, index) => {
+                // Generate file name
+                var fileName = folderName.concat("/");
+
+                // Check for course index
+                fileName = fileName.concat(func.numString(courseIndex) + ".");
+
+                // Check for class index
+                fileName = fileName.concat(func.numString(index));
+
+                fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-") + ".srt");
+                fileName = fileName.replace("?", "").replace(":", " - ");
+
+                videoList.push(fileName.replace(".srt", ".mp4"));
+
+                // Converts object file to srt, the outputs it.
+                converter.transcriptToArr(item).then(transcript => {
+                    converter.objToSRT(transcript).then((srt) => {
+                    if (getSRT) {
+                        // console.log(transcript);
+                        fs.writeFileSync(fileName, srt);
+                    } else {
+                        console.log("Transcript generation ignored for " + fileName);
+
+                    }
+                });
+                }) 
+
+            });
+
         });
 
         resolve(videoList);
@@ -120,13 +191,28 @@ function transcript(myJSON, getSRT = true) {
  * @param {Object} jsonFile - Pass the HAR file in JSON format.
  * @param {boolean} getSRT - Whether to get the SRT files.
  */
-module.exports.generateTranscript = async (jsonFile, getSRT = true) => {
+module.exports.API = (jsonFile, getSRT = true) => {
     return new Promise((resolve, reject) => {
         try {
-            transcript(jsonFile, getSRT).then((videoList) => {
+            APItranscript(jsonFile, getSRT).then((videoList) => {
                 resolve(videoList);
             });
-    
+
+        } catch (err) {
+            console.log(err);
+            resolve(false);
+        }
+    })
+}
+
+
+module.exports.local = (jsonFile, getSRT = true) => {
+    return new Promise((resolve, reject) => {
+        try {
+            localTranscript(jsonFile, getSRT).then((videoList) => {
+                resolve(videoList);
+            });
+
         } catch (err) {
             console.log(err);
             resolve(false);
