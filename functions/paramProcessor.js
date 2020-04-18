@@ -75,7 +75,7 @@ function helpText() {
         "\t--noInfo\t\tDisables output of course information.\n",
         "\t--noBB\t\t\tDisables output of BB code.\n",
         "\t--videoDownload\t\tDownloads video using filenames as specified in \'./output/videoList.json\'\n",
-        "\t--noURL\t\tDisables output of video URLs.\n\n",
+        "\t--noURL\t\t\tDisables output of video URLs.\n\n",
         "\rProudly presented to you by flyingdragon of BlackPearl. Licensed under the GNU General Public License v3.\n",
         "\rPRs welcome at https://github.com/kwongtn/CourseExtractor \n\n",
         "\rIf there are any issues, please open an issue at https://github.com/kwongtn/CourseExtractor/issues .",

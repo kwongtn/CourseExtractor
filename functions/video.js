@@ -15,7 +15,7 @@ function getURLs(linkJSON, extractAll = false) {
                 } else {
                     console.log("Extracting all URLs.");
                     passedJSON.urls.forEach((urlGroup, index) => {
-                        URLs.push(urlGroup.url);;
+                        URLs.push(urlGroup.url);
                     })
                 }
     
