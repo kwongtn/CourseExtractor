@@ -38,6 +38,7 @@ if (!params.noSubs) {
                 const passedJSON = JSON.parse(element.response.content.text);
                 transcript.local(passedJSON).then((videoList) => {
                     fs.writeFileSync("./output/videoList.json", JSON.stringify(videoList, null, 2));
+                    console.log("Completed transcript output, total " + videoList.length + " videos.")
                 });
                 obtainedTranscript = true;
             }
