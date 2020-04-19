@@ -68,6 +68,7 @@ Usage: node ./main.js [params] path_to_HAL_file
         --noInfo                Disables output of course information.
         --noBB                  Disables output of BB code.
         --videoDownload         Downloads video using filenames as specified in './output/videoList.json'
+        --noSizeCheck           Disables array size checking for video download. Filenames will be taken sequentially.
         --noURL                 Disables output of video URLs.
 
 ```

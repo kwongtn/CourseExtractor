@@ -153,8 +153,14 @@ if (params.videoDownload) {
             "shell": true
         }
 
-        if (URLs.length == fileNames.length) {
-            console.log("JSON files have the same size. Proceeding to download.");
+        if ((URLs.length == fileNames.length) || params.noSizeCheck) {
+            if(params.noSizeCheck){
+                console.log("Skipping JSON array size check. Array sizes are: ");
+                console.log("URL file\t:" + URLs.length);
+                console.log("fileName file\t:" + fileNames.length + "\n");
+            } else {
+                console.log("JSON files have the same array size. Proceeding to download.");
+            }
 
             URLs.forEach(async (url, index) => {
                 if(downloadCount <= 0){

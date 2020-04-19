@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const notLast = [
-    "--noSubs", "--noInfo", "--noBB", "--noURL"
+    "--noSubs", "--noInfo", "--noBB", "--noURL", "noSizeCheck"
 ]
 
 /**
@@ -15,6 +15,7 @@ function paramsProcess(params) {
         "noInfo": false,
         "noBB": false,
         "noURL": false,
+        "noSizeCheck": false,
         "videoDownload": false
     };
 
@@ -56,6 +57,11 @@ function paramsProcess(params) {
                 break;
             }
 
+            case "--noSizeCheck": {
+                keys.noSizeCheck = true;
+                break;
+            }
+
             default:
                 break;
         }
@@ -75,6 +81,7 @@ function helpText() {
         "\t--noInfo\t\tDisables output of course information.\n",
         "\t--noBB\t\t\tDisables output of BB code.\n",
         "\t--videoDownload\t\tDownloads video using filenames as specified in \'./output/videoList.json\'\n",
+        "\t--noSizeCheck\t\tDisables array size checking for video download. Filenames will be taken sequentially.\n",
         "\t--noURL\t\t\tDisables output of video URLs.\n\n",
         "\rProudly presented to you by flyingdragon of BlackPearl. Licensed under the GNU General Public License v3.\n",
         "\rPRs welcome at https://github.com/kwongtn/CourseExtractor \n\n",
