@@ -138,7 +138,7 @@ function localTranscript(myJSON, getSRT = true) {
             // Generate folder name.
             folderName = folderName.concat(func.numString(courseIndex));
 
-            folderName = folderName + " - " + element.title.replace(/\//g, "-").replace(/\\/g, "-");
+            folderName = folderName + " - " + element.title.replace(/\//g, "-").replace(/\\/g, "-").replace(/\?/g, "").replace(/\:/g, " - ").replace(/\®/g, "");
 
             // Generate folder
             if (!fs.existsSync(folderName)) {

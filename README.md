@@ -77,7 +77,12 @@ Usage: node ./main.js [params] path_to_HAL_file
     Just for fun and also to test my NodeJS and programming skills. <strike>Aaand also because that PluralSight's courses are so good I want to download them for viewing later on.</strike>
 
 1. Are you sure this project is just for fun?\
-    Since you're asking, no. Not really. Its also a way to raise awareness on client-server security and how easily (given the right time, skills and tools) it is to scrape a website, even though it is behind a paywall.
+    Since you're asking, no. Not really. Its also a way to raise awareness on client-server security and how easily (given the right time, skills and tools) it is to scrape a website, even though it is behind a paywall.  
+    So apparently I've been caught testing this script out and according to the customer support representative:
+    ```
+    Some things to check to make sure this doesn't happen again are: make sure you don't click rapidly through videos; make sure you're not signed into multiple devices; and make sure only one person is using this account.
+    ```
+    So for anyone trying to use this script, please be vigilant. I've currently estimated they rate limit the video link requests to 50+ per set time period. So if there are courses that have many videos (you may check when outputting transcripts), do seperate the video requests to multiple sessions.
 
 1. Why NodeJS?\
     Cause its asynchronous nature and because I hate Python. C++ would be much quicker as it is compiled, but does not have native JSON support so I kinda gave it up.

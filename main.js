@@ -141,7 +141,7 @@ var downloadCount = DOWNLOAD_LIMIT;
 var downloadMultiplier = 0;
 
 if (params.videoDownload) {
-    console.log("Waiting for 5 sec timeout...");
+    console.log("Waiting for 3 sec timeout...");
     setTimeout(() => {
         console.log("Wait complete.");
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
@@ -174,5 +174,5 @@ if (params.videoDownload) {
         } else {
             console.log("URL length & fileNames length mismatch, exiting.");
         }
-    }, 5000)
+    }, 3000)
 }
