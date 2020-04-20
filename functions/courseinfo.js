@@ -1,4 +1,5 @@
 const fs = require('fs');
+const converter = require('./converter.js');
 
 /**
  * 
@@ -54,6 +55,10 @@ function authorDetails(authors, header = false){
         text += "Author Information\n";
     }
     authors.forEach((author, index) => {
+        if(!header){
+            text += "[IMG]" + author.avatar.defaultUrl + "[/IMG]\n"
+        }
+
         text += author.displayName + "\n";
         text += author.bio + "\n\n";
     });
@@ -102,6 +107,20 @@ function moduleList(courseTitle, modules) {
 }
 
 /**
+ * 
+ * @param {string} seconds Course duration string. Should be in format of PT<number>S
+ */
+function duration(seconds) {
+    return new Promise((resolve, reject) => {
+        seconds = seconds.replace(/PT/g, "").replace(/S/g, "");
+        const num = Number.parseFloat(seconds);
+
+        resolve(converter.secsConvert(num));
+
+    });
+}
+
+/**
  * Returns concatenated string of shortDescription, then longDescription.
  * @param {Object} courseInfo 
  */
@@ -123,11 +142,11 @@ function skillPathInfo(skillPaths, header = false){
         text += "- " + skillPath.title + "\n";
     });
 
-    return text;
-}
-
-function lastUpdate(courseInfo){
-    return courseInfo.updatedOn;
+    if(text == "" || text == "Skillpath Information\n"){
+        return text + "None\n";
+    } else {
+        return text;
+    }
 }
 
 /**
@@ -159,14 +178,25 @@ function courseInfoGenerator(courseInfo) {
         text += "============================================================================\n";
         text += skillPathInfo(courseInfo.skillPaths, true);
 
-        const returnList = {
-            "text": text,
-            "courseInfo": courseInfo
-        };
+        // Generating additional course information
+        text += "============================================================================\n";
+        text += "Published on: " + courseInfo.publishedOn + "\n";
+        text += "Last updated: " + courseInfo.updatedOn + "\n";
+        text += "Level       : " + courseInfo.level + "\n";
+        duration(courseInfo.duration).then((duration) => {
+            text += "Duration    : " + duration.hours + " hours " + duration.minutes + " minutes " + duration.seconds + " seconds\n";
+            
+            const returnList = {
+                "text": text,
+                "courseInfo": courseInfo
+            };
+    
+            resolve(returnList);
+    
+            reject("Error");
+        });
 
-        resolve(returnList);
 
-        reject("Error");
     });
 }
 
@@ -210,17 +240,29 @@ function courseInfoBbCodeGenerator(courseInfo) {
         text += skillPathInfo(courseInfo.skillPaths, false);
         text += "\n";
 
-        // Add download link section
-        text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
-        text += "REMEMBER TO INSERT THE LINK HERE!!!!!!!!!!!!\n";
-        text += "[/DOWNCLOUD]\n[/HIDEREACT]"
+        // Generating additional course information
+        text += "============================================================================\n";
+        text += "[B]Published on: [/B]" + courseInfo.publishedOn + "\n";
+        text += "[B]Last updated: [/B]" + courseInfo.updatedOn + "\n";
+        text += "[B]Level       : [/B]" + courseInfo.level + "\n";
+        duration(courseInfo.duration).then((duration) => {
+            text += "[B]Duration    : [/B]" + duration.hours + " hours " + duration.minutes + " minutes " + duration.seconds + " seconds\n\n";
+                
+            // Add download link section
+            text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
+            text += "REMEMBER TO INSERT THE LINK HERE!!!!!!!!!!!!\n";
+            text += "[/DOWNCLOUD]\n[/HIDEREACT]"
+    
+            const returnList = {
+                "text": text,
+                "courseInfo": courseInfo
+            };
+    
+            resolve(returnList);
+    
+            reject("Error");
+        });
 
-        const returnList = {
-            "text": text,
-            "courseInfo": courseInfo
-        };
-
-        resolve(returnList);
     });
 }
 
