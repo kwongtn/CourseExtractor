@@ -96,7 +96,7 @@ function moduleList(courseTitle, modules) {
                     moduleList += "└ └ " + clip.title + "\n";
                 } else {
                     moduleList += "│ └ " + clip.title + "\n";
-                    moduleList += "│\n"
+                    moduleList += "│\n";
                 }
             } else {
                 moduleList += "│ ├ " + clip.title + "\n";

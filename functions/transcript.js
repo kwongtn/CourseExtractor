@@ -160,7 +160,7 @@ function localTranscript(myJSON, getSRT = true) {
                 // Check for class index
                 fileName = fileName.concat(func.numString(index));
 
-                fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-") + ".srt");
+                fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-").replace(/\"/g, "\'") + ".srt");
                 fileName = fileName.replace(/\?/g, "").replace(/\:/g, "- ").replace(/\®/g, "");
 
                 videoList.push(fileName.replace(".srt", ".mp4"));
