@@ -1,11 +1,25 @@
-
-function getClipID(entry){
+/**
+ * 
+ * @param {array} entries 
+ */
+function getClipID(entries){
     return new Promise((resolve) => {
-        entry.request.headers.forEach((header, index) => {
-            if(header.name == "referer"){
-                resolve(header.value.replace("https:\/\/app.pluralsight.com\/course\-player\?clipId\=", ""));
+        entries.forEach((entry) => {
+            const searchString = /https:\/\/vid.pluralsight.com\/clips\/resolution\/.*/;
+
+            if(searchString.test(entry.url)){
+                var returnURL = entry.url.replace(/https:\/\/vid.pluralsight.com\/clips\/resolution\//g, "");
+                returnURL = returnURL.replace(/\/current\/mp4\/.*/g, "");
+                console.log(returnURL);
+                resolve(returnURL);
             }
-        })
+        });
+
+        // entries.request.headers.forEach((header, index) => {
+        //     if(header.name == "referer"){
+        //         resolve(header.value.replace("https:\/\/app.pluralsight.com\/course\-player\?clipId\=", ""));
+        //     }
+        // })
     })
 }
 
@@ -18,14 +32,13 @@ function getClipID(entry){
 function getURLs(linkJSON, extractAll = false) {
     const searchString = /https:\/\/app.pluralsight.com\/video\/clips\/v3\/viewclip.*/;
     var URLs = [];
-    var videoIDFound = false;
     linkJSON.log.entries.forEach(async(element, index) => {
         try {
             if (searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
                 if (!extractAll) {
                     var myJSON = {};
-                    const videoID = await getClipID(element);
+                    const videoID = await getClipID(passedJSON.urls);
 
                     myJSON.url = passedJSON.urls[0].url;
                     myJSON.version = passedJSON.version;

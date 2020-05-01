@@ -178,7 +178,7 @@ if (params.videoDownload) {
 
                 setTimeout(() => {
                     console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
-                    exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
+                    // exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
 
                     languages.forEach((language) => {
                         const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
