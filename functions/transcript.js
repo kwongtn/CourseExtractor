@@ -149,6 +149,9 @@ function localTranscript(myJSON, getSRT = false) {
                 }
             }
 
+            // Add key to folder name.
+            folderName += "11B42C394C6217C5135BF7E4AC23E";
+
             // Output the transcript file.
             element.clips.forEach(async (item, index) => {
                 // Generate file name
@@ -169,10 +172,10 @@ function localTranscript(myJSON, getSRT = false) {
                 converter.transcriptToArr(item).then(transcript => {
                     converter.objToSRT(transcript).then((srt) => {
                     if (getSRT) {
-                        // console.log(transcript);
+                        // console.log(srt);
                         fs.writeFileSync(fileName, srt);
                     } else {
-                        console.log("Transcript generation ignored for " + fileName);
+                        // console.log("Transcript generation ignored for " + fileName);
 
                     }
                 });
@@ -209,7 +212,7 @@ module.exports.API = (jsonFile, getSRT = true) => {
  * @param {Object} jsonFile - Pass the HAR file in JSON format.
  * @param {boolean} getSRT - Whether to get the SRT files.
  */
-module.exports.local = (jsonFile, getSRT = true) => {
+module.exports.local = (jsonFile, getSRT = false) => {
     return new Promise((resolve, reject) => {
         try {
             localTranscript(jsonFile, getSRT).then((videoList) => {

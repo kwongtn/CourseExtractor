@@ -178,15 +178,15 @@ if (params.videoDownload) {
 
                 setTimeout(() => {
                     console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
-                    // exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
+                    exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "") + ".mp4" );
 
                     languages.forEach((language) => {
                         const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
                         console.log(subURL);
                         if(language == "en"){
-                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + ".vtt");
+                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "") + ".vtt");
                         } else {
-                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + "_" + language + ".vtt");
+                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "/otherSubs") + "_" + language + ".vtt");
                         }
                     })
                 }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
