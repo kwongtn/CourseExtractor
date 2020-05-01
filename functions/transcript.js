@@ -11,7 +11,7 @@ var apiCount = API_LIMIT;
 var apiMultiplier = 0;
 
 /**
- * 
+ * Requests transcript using API pointed to toolslick.com
  * @param {Object} myJSON - The JSON containing the transcript.
  * @param {boolean} getSRT - Whether to get srt files.
  */
@@ -93,7 +93,7 @@ function APItranscript(myJSON, getSRT = true) {
                     }
 
                     setTimeout(() => {
-                        converter.lrcToSRT(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
+                        converter.APIlrcToSRT(transcript.replace(/"/g, "\\" + "\"").replace(/'/g, "\\" + "\'")).then((srt) => {
                             try {
                                 fs.writeFileSync(fileName, srt);
                                 console.log("Completed output for " + fileName);

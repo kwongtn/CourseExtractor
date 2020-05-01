@@ -17,6 +17,7 @@ var options = {
 /**
  * Converts LRC files to srt via [toolslick.com](toolslick.com)
  * @param {string} bodyText - LRC file as string.
+ * @returns {Promise<string>}
  */
 function APIlrcToSRT(bodyText) {
     return new Promise((resolve, reject) => {
