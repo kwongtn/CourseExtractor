@@ -11,7 +11,7 @@ var apiCount = API_LIMIT;
 var apiMultiplier = 0;
 
 /**
- * Requests transcript using API pointed to toolslick.com
+ * Deprecated - Requests transcript using API pointed to toolslick.com
  * @param {Object} myJSON - The JSON containing the transcript.
  * @param {boolean} getSRT - Whether to get srt files.
  */
@@ -163,7 +163,7 @@ function localTranscript(myJSON, getSRT = true) {
                 fileName = fileName.concat(" - " + item.title.replace(/\//g, "-").replace(/\\/g, "-").replace(/\"/g, "\'") + ".srt");
                 fileName = fileName.replace(/\?/g, "").replace(/\:/g, "- ").replace(/\®/g, "");
 
-                videoList.push(fileName.replace(".srt", ".mp4"));
+                videoList.push(fileName.replace(".srt", ""));
 
                 // Converts object file to srt, the outputs it.
                 converter.transcriptToArr(item).then(transcript => {
@@ -205,7 +205,10 @@ module.exports.API = (jsonFile, getSRT = true) => {
     })
 }
 
-
+/**
+ * @param {Object} jsonFile - Pass the HAR file in JSON format.
+ * @param {boolean} getSRT - Whether to get the SRT files.
+ */
 module.exports.local = (jsonFile, getSRT = true) => {
     return new Promise((resolve, reject) => {
         try {

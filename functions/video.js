@@ -1,5 +1,5 @@
 /**
- * Outputs video links as array
+ * Outputs video links as array, together with stuff for subtitles.
  * @param {Object} linkJSON - JSON containing all video links.
  * @param {boolean} extractAll - Whether to output all possible URLs
  */
@@ -11,7 +11,11 @@ function getURLs(linkJSON, extractAll = false) {
             if (searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
                 if (!extractAll) {
-                    URLs.push(passedJSON.urls[0].url);
+                    var myJSON = {};
+                    myJSON.url = passedJSON.urls[0].url;
+                    myJSON.version = passedJSON.version;
+                    myJSON.sessionID = passedJSON.sessionId;
+                    URLs.push(myJSON);
                 } else {
                     console.log("Extracting all URLs.");
                     passedJSON.urls.forEach((urlGroup, index) => {
