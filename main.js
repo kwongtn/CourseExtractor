@@ -141,7 +141,7 @@ var downloadCount = DOWNLOAD_LIMIT;
 var downloadMultiplier = 0;
 
 if (params.videoDownload) {
-    console.log("Waiting for 3 sec timeout...");
+    console.log("Waiting for 1 sec timeout...");
     setTimeout(() => {
         console.log("Wait complete.");
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
@@ -178,12 +178,16 @@ if (params.videoDownload) {
 
                 setTimeout(() => {
                     console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
-                    // exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
+                    exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
 
                     languages.forEach((language) => {
-                        const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + JSON.stringify(package.videoID) + "/" + JSON.stringify(package.version) + "\/" + language + "\/";
+                        const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
                         console.log(subURL);
-                        exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + "_" + language + ".vtt");
+                        if(language == "en"){
+                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + ".vtt");
+                        } else {
+                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + "_" + language + ".vtt");
+                        }
                     })
                 }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
@@ -193,5 +197,5 @@ if (params.videoDownload) {
         } else {
             console.log("URL length & fileNames length mismatch, exiting.");
         }
-    }, 3000)
+    }, 1000)
 }
