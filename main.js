@@ -61,7 +61,6 @@ if (!params.noInfo) {
                 courseInfo.courseInfoTxt(passedJSON).then((output) => {
                     try {
                         fs.writeFileSync("./output/courseInfo_" + output.courseInfo.id + ".txt", output.text);
-                        fs.writeFileSync("./output/courseInfoJSON.json", JSON.stringify(output.courseInfo, null, 2));
                         console.log("Completed course output for " + output.courseInfo.id);
                     } catch (err) {
                         console.log(err);
@@ -93,7 +92,6 @@ if (!params.noBB) {
                 courseInfo.courseInfoBbCode(passedJSON).then((output) => {
                     try {
                         fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
-                        fs.writeFileSync("./output/courseInfoJSON.json", JSON.stringify(output.courseInfo, null, 2));
                         console.log("Completed bb text output for " + output.courseInfo.id);
                     } catch (err) {
                         console.log(err);
@@ -148,7 +146,7 @@ if (params.videoDownload) {
         console.log("Wait complete.");
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
         const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
-        const courseInfo = JSON.parse(fs.readFileSync("./output/courseInfo.json", "utf-8"));
+
 
         // Options for child_process.spawn section
         const options = {
@@ -165,7 +163,7 @@ if (params.videoDownload) {
                 console.log("JSON files have the same array size. Proceeding to download.");
             }
 
-            URLs.forEach(async (url, index) => {
+            URLs.forEach(async (package, index) => {
                 if(downloadCount <= 0){
                     downloadCount = DOWNLOAD_LIMIT;
                     downloadMultiplier++;
@@ -174,7 +172,7 @@ if (params.videoDownload) {
 
                 setTimeout(() => {
                     console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
-                    exec("curl " + url + " --output " + JSON.stringify(fileNames[index].url) + ".mp4" );
+                    // exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
 
                     const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + JSON.stringify(courseInfo.courseId) + "/" + JSON.stringify(fileNames[index].url) + "/en/";
                     exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index].url) + ".vtt");

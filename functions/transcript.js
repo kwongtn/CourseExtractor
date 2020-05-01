@@ -115,7 +115,7 @@ function APItranscript(myJSON, getSRT = true) {
     });
 }
 
-function localTranscript(myJSON, getSRT = true) {
+function localTranscript(myJSON, getSRT = false) {
     return new Promise((resolve, reject) => {
 
         var videoList = [];
