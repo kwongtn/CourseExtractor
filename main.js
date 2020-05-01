@@ -147,6 +147,12 @@ if (params.videoDownload) {
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
         const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
 
+        let languages;
+        if(fs.existsSync("./output/subLanguages.json")){
+            languages = JSON.parse(fs.readFileSync("./output/subLanguages.json", "utf-8"));
+        } else {
+            languages = ["en"];
+        }
 
         // Options for child_process.spawn section
         const options = {
@@ -174,8 +180,11 @@ if (params.videoDownload) {
                     console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
                     // exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]) + ".mp4" );
 
-                    const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + JSON.stringify(courseInfo.courseId) + "/" + JSON.stringify(fileNames[index].url) + "/en/";
-                    exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index].url) + ".vtt");
+                    languages.forEach((language) => {
+                        const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + JSON.stringify(package.videoID) + "/" + JSON.stringify(package.version) + "\/" + language + "\/";
+                        console.log(subURL);
+                        exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]) + "_" + language + ".vtt");
+                    })
                 }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
 
