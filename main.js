@@ -146,6 +146,7 @@ if (params.videoDownload) {
         console.log("Wait complete.");
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
         const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
+        const key = "11B42C394C6217C5135BF7E4AC23E";
 
         let languages;
         if(fs.existsSync("./output/subLanguages.json")){
@@ -166,7 +167,7 @@ if (params.videoDownload) {
                 console.log("URL file\t:" + URLs.length);
                 console.log("fileName file\t:" + fileNames.length + "\n");
             } else {
-                console.log("JSON files have the same array size. Proceeding to download.");
+                console.log("JSON files have the same array size of " + URLs.length + ". Proceeding to download.");
             }
 
             URLs.forEach(async (package, index) => {
@@ -177,19 +178,27 @@ if (params.videoDownload) {
                 }
 
                 setTimeout(() => {
-                    console.log("\nCURL-ing for " + JSON.stringify(fileNames[index]));
-                    exec("curl " + package.url + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "") + ".mp4" );
+                    console.log("\n\n=============\nCURL-ing for " + fileNames[index].replace(key, "") + "\n");
+                    const videoFileName = fileNames[index].replace(key, "") + ".mp4";
+                    console.log(videoFileName);
+                    exec("curl " + package.url + " -P 5 --output \"" + videoFileName + "\"");
 
                     languages.forEach((language) => {
                         const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
                         console.log(subURL);
+                        
+                        let subFileName;
                         if(language == "en"){
-                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "") + ".vtt");
+                            subFileName = fileNames[index].replace(key, "") + ".vtt";
                         } else {
-                            exec("curl " + subURL + " --output " + JSON.stringify(fileNames[index]).replace("11B42C394C6217C5135BF7E4AC23E", "/otherSubs") + "_" + language + ".vtt");
+                            if(!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))){
+                                fs.mkdirSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"));
+                            }
+                            subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";
                         }
+                        exec("curl " + subURL + " --output \"" + subFileName + "\"");
                     })
-                }, downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
+                }, 0);// downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
 
                 downloadCount--;
