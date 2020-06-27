@@ -166,6 +166,10 @@ if (params.videoDownload) {
                 console.log("Skipping JSON array size check. Array sizes are: ");
                 console.log("URL file\t:" + URLs.length);
                 console.log("fileName file\t:" + fileNames.length + "\n");
+
+                if(URLs.length == fileNames.length){
+                    console.log("\nArray sizes same. It is recommended that you turn on array size check to ensure JSON file integrity.");
+                }
             } else {
                 console.log("JSON files have the same array size of " + URLs.length + ". Proceeding to download.");
             }
@@ -204,7 +208,8 @@ if (params.videoDownload) {
                 downloadCount--;
             })
         } else {
-            console.log("URL length & fileNames length mismatch, exiting.");
+            console.log("URL length & fileNames length mismatch: \nURL\t\t: " + URLs.length + "\nFilenames\t: " + fileNames.length);
+            console.log("Exiting.");
         }
     }, 1000)
 }
