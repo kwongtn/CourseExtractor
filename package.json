@@ -1,0 +1,22 @@
+{
+  "name": "courseextractor",
+  "version": "1.0.0",
+  "description": "[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![HitCount](http://hits.dwyl.com/kwongtn/CourseExtractor.svg)](http://hits.dwyl.com/kwongtn/CourseExtractor) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/kwongtn/CourseExtractor/issues)",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwongtn/CourseExtractor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kwongtn/CourseExtractor/issues"
+  },
+  "homepage": "https://github.com/kwongtn/CourseExtractor#readme",
+  "dependencies": {
+    "node-vtt-to-srt": "^1.0.1"
+  }
+}

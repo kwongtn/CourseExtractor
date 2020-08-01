@@ -28,7 +28,7 @@ function courseURL(courseInfo) {
  * @param {Object} courseInfo 
  * @param {boolean} linebreak - Whether to include line break after function completes.
  */
-function authorList(courseInfo, linebreak = true){
+function authorList(courseInfo, linebreak = true) {
     var list = "";
     courseInfo.authors.forEach((author, index) => {
         if (index == 0) {
@@ -37,7 +37,7 @@ function authorList(courseInfo, linebreak = true){
             list += ", " + author.displayName;
         }
     });
-    if(linebreak){
+    if (linebreak) {
         list += "\n";
     }
 
@@ -49,13 +49,13 @@ function authorList(courseInfo, linebreak = true){
  * @param {array} authors 
  * @param {boolean} header
  */
-function authorDetails(authors, header = false){
+function authorDetails(authors, header = false) {
     var text = "";
-    if (header){
+    if (header) {
         text += "Author Information\n";
     }
     authors.forEach((author, index) => {
-        if(!header){
+        if (!header) {
             text += "[IMG]" + author.avatar.defaultUrl + "[/IMG]\n"
         }
 
@@ -72,15 +72,15 @@ function authorDetails(authors, header = false){
  * @param {boolean} company - Whether to include "PluralSight" at the start of the title.
  * @param {boolean} linebreak - Passing value to authorList function.
  */
-function heading(courseInfo, company = true, linebreak = true){
+function heading(courseInfo, company = true, linebreak = true) {
     var text = "";
-    if (company){
+    if (company) {
         text += "Pluralsight - ";
     }
     text += courseInfo.title + " by " + authorList(courseInfo, linebreak);
     return text;
 }
-  
+
 /**
  * Generates course list with format
  * @param {string} courseTitle - Title of course.
@@ -133,7 +133,7 @@ function courseDesc(courseInfo) {
  * @param {array} skillPaths - Array of skillPaths of the course
  * @param {boolean} header - Whether to include skillpath information header
  */
-function skillPathInfo(skillPaths, header = false){
+function skillPathInfo(skillPaths, header = false) {
     var text = "";
     if (header) {
         text += "Skillpath Information\n";
@@ -142,7 +142,7 @@ function skillPathInfo(skillPaths, header = false){
         text += "- " + skillPath.title + "\n";
     });
 
-    if(text == "" || text == "Skillpath Information\n"){
+    if (text == "" || text == "Skillpath Information\n") {
         return text + "None\n";
     } else {
         return text;
@@ -158,7 +158,7 @@ function courseInfoGenerator(courseInfo) {
 
         var text = "Extracted using the CourseExtractor script by flyingdragon of BlackPearl.\n";
         text += "============================================================================\n";
-        
+
         text += heading(courseInfo);
 
         // Generating course description
@@ -190,9 +190,9 @@ function courseInfoGenerator(courseInfo) {
                 "text": text,
                 "courseInfo": courseInfo
             };
-    
+
             resolve(returnList);
-    
+
             reject("Error");
         });
 
@@ -220,7 +220,7 @@ function courseInfoBbCodeGenerator(courseInfo) {
         // Add course description
         text += "[B][U]Course Description[/B][/U]\n";
         text += courseDesc(courseInfo) + "\n";
-        
+
         // Add course link
         text += "[B][U]Course Link[/B][/U]\n"
         text += courseURL(courseInfo) + "\n";
@@ -247,19 +247,19 @@ function courseInfoBbCodeGenerator(courseInfo) {
         text += "[B]Level       : [/B]" + courseInfo.level + "\n";
         duration(courseInfo.duration).then((duration) => {
             text += "[B]Duration    : [/B]" + duration.hours + " hours " + duration.minutes + " minutes " + duration.seconds + " seconds\n\n";
-                
+
             // Add download link section
             text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
             text += "REMEMBER TO INSERT THE LINK HERE!!!!!!!!!!!!\n";
             text += "[/DOWNCLOUD]\n[/HIDEREACT]"
-    
+
             const returnList = {
                 "text": text,
                 "courseInfo": courseInfo
             };
-    
+
             resolve(returnList);
-    
+
             reject("Error");
         });
 
