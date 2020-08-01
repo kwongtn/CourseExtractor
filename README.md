@@ -39,8 +39,9 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
 1. The outputs should be in the `./output` directory.
 
 ### Getting videos
-\* You may need to be a little quick on this.
-1. Continuing from above, click on the first video in the course. A new tab should open.
+\* You may need to be a little quick on this.  
+1. __[Method 1, old]__ Continuing from previous section (Getting Course Information), click on the first video in the course. A new tab should open.  
+__[Method 2, untested for resiliency]__ Continuing from previous section (Getting Course Information), copy the first URL and paste it into your browser. Incognito mode recommended.
 1. Open Google Chrome's Developer Tools in the new tab and navigate to the network tab. 
 1. In the filter box, type in `viewclip`. There should be 1 result.
 1. Clear the log and refresh the page.

@@ -106,6 +106,43 @@ function moduleList(courseTitle, modules) {
     return moduleList;
 }
 
+function generateVideoURLs(courseSlug, moduleID, clipOrdering) {
+    return "https://app.pluralsight.com/player?course=" + courseSlug
+        + "&name=" + moduleID
+        + "&clip=" + clipOrdering;
+}
+
+/**
+ * Generates course list with format
+ * @param {string} courseTitle - Title of course.
+ * @param {string} courseSlug - Course slug (or ID) to be included in the URL.
+ * @param {array} modules - An array of modules / subtopics of the course.
+ * @return {string}
+ */
+function moduleListWithURLs(courseTitle, courseSlug, modules) {
+    var moduleList = "" + courseTitle + "\n";
+    modules.forEach((module, moduleIndex) => {
+        moduleList += "├ " + module.title + "\n";
+        module.clips.forEach((clip, index) => {
+            if ((index + 1) == module.clips.length) {
+                if ((moduleIndex + 1) == modules.length) {
+                    moduleList += "└ └ " + clip.title + "\n";
+                    moduleList += "    " + generateVideoURLs(courseSlug, module.moduleId, clip.ordering) + "\n";
+                    moduleList += "\n"
+                } else {
+                    moduleList += "│ └ " + clip.title + "\n";
+                    moduleList += "│   " + generateVideoURLs(courseSlug, module.moduleId, clip.ordering) + "\n";
+                    moduleList += "│\n";
+                }
+            } else {
+                moduleList += "│ ├ " + clip.title + "\n";
+                moduleList += "│ │ " + generateVideoURLs(courseSlug, module.moduleId, clip.ordering) + "\n";
+            }
+        });
+    });
+    return moduleList;
+}
+
 /**
  * 
  * @param {string} seconds Course duration string. Should be in format of PT<number>S
@@ -185,7 +222,11 @@ function courseInfoGenerator(courseInfo) {
         text += "Level       : " + courseInfo.level + "\n";
         duration(courseInfo.duration).then((duration) => {
             text += "Duration    : " + duration.hours + " hours " + duration.minutes + " minutes " + duration.seconds + " seconds\n";
-            
+
+            text += "============================================================================\n";
+            text += "Video Link List\n\n"
+            text += moduleListWithURLs(courseInfo.title, courseInfo.slug, courseInfo.modules);
+
             const returnList = {
                 "text": text,
                 "courseInfo": courseInfo
@@ -249,7 +290,11 @@ function courseInfoBbCodeGenerator(courseInfo) {
             text += "[B]Duration    : [/B]" + duration.hours + " hours " + duration.minutes + " minutes " + duration.seconds + " seconds\n\n";
 
             // Add download link section
-            text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n[DOWNCLOUD]\n";
+            text += "[B][U]Download Link[/B][/U]\n[HIDEREACT=1,2,3,4,5,6]\n";
+            text += "[B][U]Video links (open them in an incognito window)[/B][/U]\n[SPOILER=\"Course Video Links\"]\n"
+            text += moduleListWithURLs(courseInfo.title, courseInfo.slug, courseInfo.modules);
+            text += "[/SPOILER]\n";
+            text += "[DOWNCLOUD]\n";
             text += "REMEMBER TO INSERT THE LINK HERE!!!!!!!!!!!!\n";
             text += "[/DOWNCLOUD]\n[/HIDEREACT]"
 
