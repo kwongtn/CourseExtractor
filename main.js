@@ -1,7 +1,7 @@
-const transcript = require("./functions/transcript.js");
 const courseInfo = require("./functions/courseinfo.js");
 const paramProcessor = require("./functions/paramProcessor.js");
 const video = require("./functions/video.js");
+const filelister = require("./functions/filelister.js");
 const exec = require("child_process").execSync;
 const fs = require("fs");
 
@@ -28,26 +28,25 @@ if (!fs.existsSync("./output")) {
     }
 }
 
-// Generate transcript and video list.
-if (!params.noSubs) {
-    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/user\/courses.*transcript/;
-    var obtainedTranscript = false
+// Generate video list
+if (!params.videoDownload) {
+    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
+    var obtainedVideoList = false;
     try {
         myJSON.log.entries.forEach((element, index) => {
-            if (!obtainedTranscript && searchString.test(element.request.url)) {
+            if (!obtainedCourseInfo && searchString.test(element.request.url)) {
                 const passedJSON = JSON.parse(element.response.content.text);
-                transcript.local(passedJSON).then((videoList) => {
-                    fs.writeFileSync("./output/videoList.json", JSON.stringify(videoList, null, 2));
-                    console.log("Completed transcript output, total " + videoList.length + " videos.")
-                });
-                obtainedTranscript = true;
+                filelister.generatePaths(passedJSON);
+
+                obtainedVideoList = true;
             }
         });
     } catch (err) {
         console.log(err.message);
-        console.log("If you see this its probably because the HAR file you provided does not have a transcript, or that the format has changed.");
+        console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
         console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
     }
+
 }
 
 // Generate and write courseInfo to output

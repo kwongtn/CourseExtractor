@@ -30,7 +30,6 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
     - Check `preserve log` and `disable cache`.
     - Clear the current captured data.
 1. In the course page, refresh the page with the description. You should see stuff going in Developer Tools network tab. You have now caputured data for course information output.
-1. Navigate to the course "transcript" page. You have now captured data for transcript output.
 1. You may now export the HAL file and close the Developer Tool window.
 1. Run the program with the following command: 
     ```
@@ -55,7 +54,7 @@ __[Method 2, untested for resiliency]__ Continuing from previous section (Gettin
     ```
     node ./main.js --videoDownload path_to_HAL_file
     ```
-1. An output of all the video URLs will be in the `./output/videoList.json` file, and if you specified the `--videoDownload` parameter, videos will be downloaded alongside the subtitle files.
+1. An output of all the video URLs will be in the `./output/URLs.json` file, and if you specified the `--videoDownload` parameter, videos will be downloaded alongside the subtitle files.
 1. <strike> Copy the links and paste into any downloader (or browser window) to download the videos. Do note that you would need to manually rename the files.</strike>
 
 
