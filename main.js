@@ -149,7 +149,7 @@ if (params.videoDownload) {
         const key = "11B42C394C6217C5135BF7E4AC23E";
 
         let languages;
-        if(fs.existsSync("./output/subLanguages.json")){
+        if (fs.existsSync("./output/subLanguages.json")) {
             languages = JSON.parse(fs.readFileSync("./output/subLanguages.json", "utf-8"));
         } else {
             languages = ["en"];
@@ -162,12 +162,12 @@ if (params.videoDownload) {
         }
 
         if ((URLs.length == fileNames.length) || params.noSizeCheck) {
-            if(params.noSizeCheck){
+            if (params.noSizeCheck) {
                 console.log("Skipping JSON array size check. Array sizes are: ");
                 console.log("URL file\t:" + URLs.length);
                 console.log("fileName file\t:" + fileNames.length + "\n");
 
-                if(URLs.length == fileNames.length){
+                if (URLs.length == fileNames.length) {
                     console.log("\nArray sizes same. It is recommended that you turn on array size check to ensure JSON file integrity.");
                 }
             } else {
@@ -175,7 +175,7 @@ if (params.videoDownload) {
             }
 
             URLs.forEach(async (package, index) => {
-                if(downloadCount <= 0){
+                if (downloadCount <= 0) {
                     downloadCount = DOWNLOAD_LIMIT;
                     downloadMultiplier++;
                     // console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
@@ -190,12 +190,12 @@ if (params.videoDownload) {
                     languages.forEach((language) => {
                         const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
                         console.log(subURL);
-                        
+
                         let subFileName;
-                        if(language == "en"){
+                        if (language == "en") {
                             subFileName = fileNames[index].replace(key, "") + ".vtt";
                         } else {
-                            if(!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))){
+                            if (!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))) {
                                 fs.mkdirSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"));
                             }
                             subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";

@@ -14,12 +14,6 @@ function getClipID(entries) {
                 resolve(returnURL);
             }
         });
-
-        // entries.request.headers.forEach((header, index) => {
-        //     if(header.name == "referer"){
-        //         resolve(header.value.replace("https:\/\/app.pluralsight.com\/course\-player\?clipId\=", ""));
-        //     }
-        // })
     })
 }
 
@@ -44,8 +38,8 @@ function getURLs(linkJSON, extractAll = false) {
                     myJSON.version = passedJSON.version;
                     myJSON.sessionID = passedJSON.sessionId;
                     myJSON.videoID = videoID;
-                    
-                    if(!history.includes(myJSON.url)){
+
+                    if (!history.includes(myJSON.url)) {
                         history.push(myJSON.url);
                         URLs.push(myJSON);
 

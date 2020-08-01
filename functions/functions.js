@@ -13,7 +13,3 @@ module.exports.numString = (num, limit = 10) => {
     }
     return conv;
 }
-
-function compareNumbers(a, b) {
-    return a - b;
-}

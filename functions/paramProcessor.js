@@ -92,23 +92,6 @@ function helpText() {
 }
 
 /**
-if (process.argv.length < 3) {
-    helpText();
-    process.exit();
-} else {
-    notLast.forEach((value, index) => {
-        if (process.argv[process.argv.length - 1] == value) {
-            helpText();
-            process.exit();
-        }
-
-    });
-
-    console.log(paramsProcess(process.argv));
-}
-*/
-
-/**
  * @param {array} params
  */
 module.exports.parse = (params) => {
@@ -120,7 +103,7 @@ module.exports.parse = (params) => {
             if (params[params.length - 1] == value) {
                 helpText();
             }
-    
+
         });
         return paramsProcess(params);
     }

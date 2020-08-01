@@ -4,53 +4,6 @@ var func = require('./functions.js');
 
 var qs = require('querystring');
 
-var options = {
-    'method': 'POST',
-    'hostname': 'toolslick.com',
-    'path': '/api/process',
-    'headers': {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    'maxRedirects': 20
-};
-
-/**
- * Converts LRC files to srt via [toolslick.com](toolslick.com)
- * @param {string} bodyText - LRC file as string.
- * @returns {Promise<string>}
- */
-function APIlrcToSRT(bodyText) {
-    return new Promise((resolve, reject) => {
-        var srt = new String();
-        var req = https.request(options, function (res) {
-            var chunks = [];
-
-            res.on("data", function (chunk) {
-                chunks.push(chunk);
-            });
-
-            res.on("end", function (chunk) {
-                var body = Buffer.concat(chunks);
-                resolve(body.toString());
-            });
-
-            res.on("error", function (error) {
-                reject(error);
-            });
-        });
-
-
-        var postData = qs.stringify({
-            'parameters': '{"startCounter":"0","allowDuplicateTimestamp":true,"allowBracketinContent":true,"trailingSubtitleDisplaySeconds":"3","input":\"' + bodyText + "\"}",
-            'tool': 'subtitle-lrc-to-srt-converter'
-        });
-
-        req.write(postData);
-        req.end();
-    })
-
-}
-
 /**
  * Converts seconds to an object file containing string representation of hours, minutes and seconds.
  * @param {number} secs No. of seconds
@@ -109,17 +62,6 @@ function objToSRT(transcript) {
 
 }
 
-
-
-/**
- * @param {string} body - LRC file as string.
- */
-module.exports.APIlrcToSRT = (body) => {
-    return new Promise((resolve, reject) => {
-        resolve(APIlrcToSRT(body));
-    });
-}
-
 /**
  * @param {number} num
  * @return {Promise<string>}
@@ -142,7 +84,7 @@ function transcriptToArr(item) {
         let transcript = [];
         // Create a transcript object.
         item.segments.forEach((segment, index) => {
-    
+
             /**
              * @param {Object} startTime Start time of subtitle.
              * @param {Object} endTime End time of subtitle.
@@ -155,9 +97,9 @@ function transcriptToArr(item) {
                 "seconds": segment.displayTime,
                 "text": segment.text
             };
-            
+
             const startTimePromise = secsConvert(segment.displayTime);
-    
+
             // If it is the last subtitle, add 3 seconds to compute its endtime.
             let endTimePromise;
             if ((index + 1) == item.segments.length) {
@@ -165,13 +107,13 @@ function transcriptToArr(item) {
             } else {
                 endTimePromise = secsConvert(item.segments[index + 1].displayTime);
             }
-    
+
             Promise.all([startTimePromise, endTimePromise]).then(promises => {
                 line.startTime = promises[0];
                 line.endTime = promises[1];
                 transcript.push(line);
             });
-    
+
         });
         resolve(transcript);
     });

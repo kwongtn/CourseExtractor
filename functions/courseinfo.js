@@ -312,37 +312,6 @@ function courseInfoBbCodeGenerator(courseInfo) {
 }
 
 /**
-courseReader("./courseinfo.json").then(courseInfo => {
-    // Generate and write courseInfo
-    courseInfoGenerator(courseInfo).then(resolved => {
-        try {
-            fs.writeFileSync("./output/courseInfo_" + resolved.courseInfo.id + ".txt", resolved.text);
-            console.log("Completed course output for " + resolved.courseInfo.id);
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
-        
-        return true;
-    });
-    
-    // Generate and write courseInfo bb code. Designed for Blackpearl
-    courseInfoBbCodeGenerator(courseInfo).then(resolved => {
-        try {
-            fs.writeFileSync("./output/courseBb_" + resolved.courseInfo.id + ".txt", resolved.text);
-            console.log("Completed bb text output for " + resolved.courseInfo.id);
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
-        
-        return true;
-    });
-
-});
-*/
-
-/**
  * @param {Object} courseInfo
  */
 module.exports.courseInfoTxt = (courseInfo) => {
