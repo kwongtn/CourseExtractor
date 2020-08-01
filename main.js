@@ -186,21 +186,24 @@ if (params.videoDownload) {
                     console.log(videoFileName);
                     exec("curl " + package.url + " -P 5 --output \"" + videoFileName + "\"");
 
-                    languages.forEach((language) => {
-                        const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
-                        console.log(subURL);
+                    if (!params.noSubs) {
+                        languages.forEach((language) => {
+                            const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
+                            console.log(subURL);
 
-                        let subFileName;
-                        if (language == "en") {
-                            subFileName = fileNames[index].replace(key, "") + ".vtt";
-                        } else {
-                            if (!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))) {
-                                fs.mkdirSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"));
+                            let subFileName;
+                            if (language == "en") {
+                                subFileName = fileNames[index].replace(key, "") + ".vtt";
+                            } else {
+                                if (!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))) {
+                                    fs.mkdirSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"));
+                                }
+                                subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";
                             }
-                            subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";
-                        }
-                        exec("curl " + subURL + " --output \"" + subFileName + "\"");
-                    })
+                            exec("curl " + subURL + " --output \"" + subFileName + "\"");
+
+                        })
+                    }
                 }, 0);// downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
 
