@@ -35,51 +35,55 @@ let thisCourseInfo = {};
 myJSON.log.entries.forEach((entry) => {
     if (searchString.test(entry.request.url)) {
         thisCourseInfo = JSON.parse(entry.response.content.text);
+        obtainedCourseInfo = true;
     }
 
 });
 
-// Generate video list
-if (!params.videoDownload) {
-    filelister.generatePaths(thisCourseInfo);
+fs.writeFileSync("./output/courseInfo.json", JSON.stringify(thisCourseInfo, null, 2));
+
+if (obtainedCourseInfo) {
+    // Generate video list
+    if (!params.videoDownload) {
+        filelister.generatePaths(thisCourseInfo);
+    }
+
+    // Generate and write courseInfo to output
+    if (!params.noInfo) {
+        courseInfo.courseInfoTxt(thisCourseInfo).then((output) => {
+            try {
+                fs.writeFileSync("./output/courseInfo_" + output.courseInfo.id + ".txt", output.text);
+                console.log("Completed course output for " + output.courseInfo.id);
+            } catch (err) {
+                console.log(err);
+            }
+
+        });
+
+    }
+
+    // Generate and write course bb code to output
+    if (!params.noBB) {
+        courseInfo.courseInfoBbCode(thisCourseInfo).then((output) => {
+            try {
+                fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
+                console.log("Completed bb text output for " + output.courseInfo.id);
+            } catch (err) {
+                console.log(err);
+            }
+
+        });
+    }
+
 }
-
-// Generate and write courseInfo to output
-if (!params.noInfo) {
-    courseInfo.courseInfoTxt(thisCourseInfo).then((output) => {
-        try {
-            fs.writeFileSync("./output/courseInfo_" + output.courseInfo.id + ".txt", output.text);
-            console.log("Completed course output for " + output.courseInfo.id);
-        } catch (err) {
-            console.log(err);
-        }
-
-    });
-    
-}
-
-// Generate and write course bb code to output
-if (!params.noBB) {
-    courseInfo.courseInfoBbCode(thisCourseInfo).then((output) => {
-        try {
-            fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
-            console.log("Completed bb text output for " + output.courseInfo.id);
-        } catch (err) {
-            console.log(err);
-        }
-
-    });
-}
-
 
 // Generate and write video URLs to output
 if (!params.noURL) {
-    fs.writeFileSync("./output/urls.json", "");
 
     video.urls(myJSON).then(links => {
         try {
             try {
-                fs.appendFileSync("./output/urls.json", JSON.stringify(links, null, 2));
+                fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
                 console.log("Completed url output.");
             } catch (err) {
                 console.log(err.message);
