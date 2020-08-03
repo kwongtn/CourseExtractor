@@ -95,11 +95,7 @@ if (!params.noURL) {
 }
 
 // Video download
-const DOWNLOAD_LIMIT = 5;
-var downloadCount = DOWNLOAD_LIMIT;
-var downloadMultiplier = 0;
-
-if (params.videoDownload) {
+if (params.videoDownload /* || params.newMethod*/) {
     console.log("Waiting for 1 sec timeout...");
     setTimeout(() => {
         console.log("Wait complete.");
@@ -128,13 +124,6 @@ if (params.videoDownload) {
             }
 
             URLs.forEach(async (package, index) => {
-                if (downloadCount <= 0) {
-                    downloadCount = DOWNLOAD_LIMIT;
-                    downloadMultiplier++;
-                    // console.log("API limit reached, timeout of " + (downloadMultiplier * DOWNLOAD_TIMEOUT) + "seconds set.");
-                }
-
-                setTimeout(() => {
                     console.log("\n\n=============\nCURL-ing for " + fileNames[index].replace(key, "") + "\n");
                     const videoFileName = fileNames[index].replace(key, "") + ".mp4";
                     console.log(videoFileName);
@@ -158,10 +147,7 @@ if (params.videoDownload) {
 
                         })
                     }
-                }, 0);// downloadMultiplier * DOWNLOAD_TIMEOUT * 1000);
 
-
-                downloadCount--;
             })
         } else {
             console.log("URL length & fileNames length mismatch: \nURL\t\t: " + URLs.length + "\nFilenames\t: " + fileNames.length);
