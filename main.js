@@ -28,92 +28,53 @@ if (!fs.existsSync("./output")) {
     }
 }
 
-// Generate video list
-if (!params.videoDownload) {
-    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
-    var obtainedVideoList = false;
-    try {
-        myJSON.log.entries.forEach((element, index) => {
-            if (!obtainedCourseInfo && searchString.test(element.request.url)) {
-                const passedJSON = JSON.parse(element.response.content.text);
-                filelister.generatePaths(passedJSON);
-
-                obtainedVideoList = true;
-            }
-        });
-    } catch (err) {
-        console.log(err.message);
-        console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+// Create the courseInfo object
+const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
+var obtainedCourseInfo = false;
+let thisCourseInfo = {};
+myJSON.log.entries.forEach((entry) => {
+    if (searchString.test(entry.request.url)) {
+        thisCourseInfo = JSON.parse(entry.response.content.text);
     }
 
+});
+
+// Generate video list
+if (!params.videoDownload) {
+    filelister.generatePaths(thisCourseInfo);
 }
 
 // Generate and write courseInfo to output
 if (!params.noInfo) {
-    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
-    var obtainedCourseInfo = false;
-    try {
-        myJSON.log.entries.forEach((element, index) => {
-            if (!obtainedCourseInfo && searchString.test(element.request.url)) {
-                const passedJSON = JSON.parse(element.response.content.text);
-                courseInfo.courseInfoTxt(passedJSON).then((output) => {
-                    try {
-                        fs.writeFileSync("./output/courseInfo_" + output.courseInfo.id + ".txt", output.text);
-                        console.log("Completed course output for " + output.courseInfo.id);
-                    } catch (err) {
-                        console.log(err);
-                        return false;
-                    }
+    courseInfo.courseInfoTxt(thisCourseInfo).then((output) => {
+        try {
+            fs.writeFileSync("./output/courseInfo_" + output.courseInfo.id + ".txt", output.text);
+            console.log("Completed course output for " + output.courseInfo.id);
+        } catch (err) {
+            console.log(err);
+        }
 
-                    return true;
-                });
-
-                obtainedCourseInfo = true;
-            }
-        });
-    } catch (err) {
-        console.log(err.message);
-        console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
-    }
-
+    });
+    
 }
 
 // Generate and write course bb code to output
 if (!params.noBB) {
-    const searchString = /https:\/\/app\.pluralsight\.com\/learner\/content\/courses.*/;
-    var obtainedCourseInfoBb = false;
-    try {
-        myJSON.log.entries.forEach((element, index) => {
-            if (!obtainedCourseInfoBb && searchString.test(element.request.url)) {
-                const passedJSON = JSON.parse(element.response.content.text);
-                courseInfo.courseInfoBbCode(passedJSON).then((output) => {
-                    try {
-                        fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
-                        console.log("Completed bb text output for " + output.courseInfo.id);
-                    } catch (err) {
-                        console.log(err);
-                    }
+    courseInfo.courseInfoBbCode(thisCourseInfo).then((output) => {
+        try {
+            fs.writeFileSync("./output/courseBb_" + output.courseInfo.id + ".txt", output.text);
+            console.log("Completed bb text output for " + output.courseInfo.id);
+        } catch (err) {
+            console.log(err);
+        }
 
-                });
-
-                obtainedCourseInfoBb = true;
-            }
-        });
-    } catch (err) {
-        console.log(err);
-        console.log("If you see this its probably because the HAR file you provided does not have course info, or that the format has changed.");
-        console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
-    }
+    });
 }
 
 
 // Generate and write video URLs to output
 if (!params.noURL) {
     fs.writeFileSync("./output/urls.json", "");
-
-    var URLs = [];
 
     video.urls(myJSON).then(links => {
         try {
@@ -135,7 +96,6 @@ if (!params.noURL) {
 
 // Video download
 const DOWNLOAD_LIMIT = 5;
-const DOWNLOAD_TIMEOUT = 10;
 var downloadCount = DOWNLOAD_LIMIT;
 var downloadMultiplier = 0;
 
@@ -152,12 +112,6 @@ if (params.videoDownload) {
             languages = JSON.parse(fs.readFileSync("./output/subLanguages.json", "utf-8"));
         } else {
             languages = ["en"];
-        }
-
-        // Options for child_process.spawn section
-        const options = {
-            "detached": true,
-            "shell": true
         }
 
         if ((URLs.length == fileNames.length) || params.noSizeCheck) {
