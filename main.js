@@ -77,9 +77,25 @@ if (obtainedCourseInfo) {
 
 }
 
-// Generate and write video URLs to output
-if (!params.noURL) {
+if (params.newMethod) {
+    video.newURL(thisCourseInfo).then((links) => {
+        try {
+            try {
+                fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
+                console.log("Completed new url output.");
+            } catch (err) {
+                console.log(err.message);
+            }
+        } catch (err) {
+            console.log(err.message);
+            console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
+            console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+        }
 
+    });
+
+    // Generate and write video URLs to output
+} else if (!params.noURL) {
     video.urls(myJSON).then(links => {
         try {
             try {

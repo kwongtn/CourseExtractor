@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const notLast = [
-    "--noSubs", "--noInfo", "--noBB", "--noURL", "noSizeCheck"
+    "--noSubs", "--noInfo", "--noBB", "--noURL", "noSizeCheck", "--new"
 ]
 
 /**
@@ -16,6 +16,7 @@ function paramsProcess(params) {
         "noBB": false,
         "noURL": false,
         "noSizeCheck": false,
+        "newMethod": false,
         "videoDownload": false
     };
 
@@ -62,6 +63,11 @@ function paramsProcess(params) {
                 break;
             }
 
+            case "--new": {
+                keys.newMethod = true;
+                break;
+            }
+
             default:
                 break;
         }
@@ -77,6 +83,7 @@ function helpText() {
         "\nUsage: node ./main.js [params] path_to_HAL_file\n\n",
         "\t--help\t\t\tDisplays this help message.\n",
         "\t--license\t\tOutputs the license of this project. (GNU General Public License)\n",
+        "\t--new\t\t\t[TESTERS REQUIRED, FEATURE INCOMPLETE] Uses the new \"CourseInfo-Only\" methodology to facilitate for full course downloads. Not recommended for large courses.\n",
         "\t--noSubs\t\tDisables output of subtitles.\n",
         "\t--noInfo\t\tDisables output of course information.\n",
         "\t--noBB\t\t\tDisables output of BB code.\n",

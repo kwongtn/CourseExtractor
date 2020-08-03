@@ -64,6 +64,7 @@ Usage: node ./main.js [params] path_to_HAL_file
 
         --help                  Displays this help message.
         --license               Outputs the license of this project. (GNU General Public License)
+        --new                   [TESTERS REQUIRED, FEATURE INCOMPLETE] Uses the new "CourseInfo-Only" methodology to facilitate for full course downloads. Not recommended for large courses.
         --noSubs                Disables output of subtitles.
         --noInfo                Disables output of course information.
         --noBB                  Disables output of BB code.
