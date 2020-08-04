@@ -35,3 +35,16 @@ module.exports.one_by_one = (objects_array, iterator, callback) => {
         return start_promise;
     }
 }
+
+
+/**
+ * Downloads the file at the URL to the saved path. Uses curl to download.
+ * @param {string} url URL of the file to be downloaded.
+ * @param {string} path Path of the file to be saved to. Relative paths acceptable.
+ * @param {int} parallel No. of parallel connections to make. Default: 1
+ */
+module.exports.curl = (url, outPath, parallel = 1) => {
+    return new Promise((resolve)=>{
+        resolve(exec.execSync("curl " + url + " -P " + parallel +" --output \"" + outPath + "\""));
+    })
+}

@@ -2,6 +2,7 @@ const courseInfo = require("./functions/courseinfo.js");
 const paramProcessor = require("./functions/paramProcessor.js");
 const video = require("./functions/video.js");
 const filelister = require("./functions/filelister.js");
+const func = require("./functions/functions.js");
 const exec = require("child_process").execSync;
 const fs = require("fs");
 
@@ -41,6 +42,14 @@ myJSON.log.entries.forEach((entry) => {
 });
 
 fs.writeFileSync("./output/courseInfo.json", JSON.stringify(thisCourseInfo, null, 2));
+
+// Read the subtitle languages
+let languages;
+if (fs.existsSync("./output/subLanguages.json")) {
+    languages = JSON.parse(fs.readFileSync("./output/subLanguages.json", "utf-8"));
+} else {
+    languages = ["en"];
+}
 
 if (obtainedCourseInfo) {
     // Generate video list
@@ -101,6 +110,7 @@ if (params.newMethod) {
             try {
                 fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
                 console.log("Completed url output.");
+
             } catch (err) {
                 console.log(err.message);
             }
@@ -123,13 +133,6 @@ if (params.videoDownload /* || params.newMethod*/) {
         const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
         const key = "11B42C394C6217C5135BF7E4AC23E";
 
-        let languages;
-        if (fs.existsSync("./output/subLanguages.json")) {
-            languages = JSON.parse(fs.readFileSync("./output/subLanguages.json", "utf-8"));
-        } else {
-            languages = ["en"];
-        }
-
         if ((URLs.length == fileNames.length) || params.noSizeCheck) {
             if (params.noSizeCheck) {
                 console.log("Skipping JSON array size check. Array sizes are: ");
@@ -145,9 +148,8 @@ if (params.videoDownload /* || params.newMethod*/) {
 
             URLs.forEach(async (package, index) => {
                     console.log("\n\n=============\nCURL-ing for " + fileNames[index].replace(key, "") + "\n");
-                    const videoFileName = fileNames[index].replace(key, "") + ".mp4";
-                    console.log(videoFileName);
-                    exec("curl " + package.url + " -P 5 --output \"" + videoFileName + "\"");
+                const videoFileName = filelister.replaceForPrimaries(fileNames[index], key, ".mp4");
+                func.curl(URLs[index], videoFileName, 5);
 
                     if (!params.noSubs) {
                         languages.forEach((language) => {
@@ -163,7 +165,7 @@ if (params.videoDownload /* || params.newMethod*/) {
                                 }
                                 subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";
                             }
-                            exec("curl " + subURL + " --output \"" + subFileName + "\"");
+                        func.curl(subURL, subFileName, 5);
 
                         })
                     }
