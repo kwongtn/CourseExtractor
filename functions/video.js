@@ -80,7 +80,7 @@ module.exports.urls = (videoJSON) => {
  * @param {string} moduleTitle Title of the current module. Used for console output.
  * @param {string} clipTitle Title of the current clip. Used for console output.
  */
-function newGetURL(clipID, moduleTitle, clipTitle) {
+function newGetURL(clipID, moduleTitle, clipTitle, moduleIndex, clipIndex, totalClipIndex) {
     return new Promise((resolve, reject) => {
         var options = {
             'method': 'POST',
@@ -109,7 +109,14 @@ function newGetURL(clipID, moduleTitle, clipTitle) {
                     console.log(myRes);
                     reject(myRes.error.message);
                 } else {
-                    console.log("VIDEOURL: Obtained => " + moduleTitle + ": " + clipTitle);
+                    console.log(
+                        "VIDEOURL: Obtained =>" + 
+                        "[" + totalClipIndex + "] - " + 
+                        "[" + moduleIndex + "] " + 
+                        moduleTitle + 
+                        ":" + 
+                        " [" + clipIndex + "] " +
+                        clipTitle);
                     resolve(myRes.urls[0].url);
                 }
             });
@@ -143,20 +150,17 @@ function newGetURL(clipID, moduleTitle, clipTitle) {
  */
 module.exports.newURL = (courseInfo) => {
     return new Promise((resolve, reject) => {
-        const MAX_COUNT = 5;
-        const WAIT_TIME = 5;
-        var timeoutMultiplier = 0;
-        var currCount = 0;
+        var moduleIndex = -1;
+        var clipIndex = 0;
+        var totalClipIndex = 0;
 
         let videoURLs = [];
         func.one_by_one(courseInfo.modules, (module) => {
+            moduleIndex++;
+            clipIndex = 0;
+
             return func.one_by_one(module.clips, (clip) => {
-                if (currCount++ == MAX_COUNT) {
-                    timeoutMultiplier++;
-                    currCount = 0;
-                }
-                currCount++;
-                return newGetURL(clip.clipId, module.title, clip.title).then((url) => {
+                return newGetURL(clip.clipId, module.title, clip.title, moduleIndex, clipIndex++, totalClipIndex++).then((url) => {
                     videoURLs.push(url);
                 });
             })
