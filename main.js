@@ -52,7 +52,7 @@ if (fs.existsSync("./output/subLanguages.json")) {
 let outputPaths;
 if (obtainedCourseInfo) {
     // Generate video list
-    if (!params.videoDownload) {
+    if (params.videoDownload) {
         filelister.generatePaths(thisCourseInfo).then((outPath) => {
             outputPaths = outPath;
         });
