@@ -22,14 +22,20 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
 1. cURL (For video downloads)
 1. (Good to have) The [save as file extension](https://chrome.google.com/webstore/detail/save-as-file/iajmdojjjiapknggfnckblngginmjnbe) if you are mass downloading, as you can directly paste the link into the extension without needing to open a new tab.
 
-## Brief
+# Notes
+We need to be more careful on using the new method. By only using it when absolutely necessary.   
+Due to the ease of getting the content, it got me thinking that PluralSight did this to benefit those that are not so fortunate, by providing them an alternative to view the courses.  
+If we abuse this, PluralSight might patch this bug (or not bug) for good.  
+Therefore, I urge everyone to use the new method wisely.
+
+## Brief (Old Method)
 ### Getting course information
 1. Log in to your PluralSight account and navigate to your desired course.
 1. Open Google Chrome's Developer Tools. (Pressing F12 is a god way to do so.)
 1. Navigate to the "network" tab and:
     - Check `preserve log` and `disable cache`.
     - Clear the current captured data.
-1. In the course page, refresh the page with the description. You should see stuff going in Developer Tools network tab. You have now caputured data for course information output.
+1. In the course page, refresh the page with the description. You should see stuff going in Developer Tools network tab. You have now captured data for course information output.
 1. You may now export the HAL file and close the Developer Tool window.
 1. Run the program with the following command: 
     ```
@@ -37,10 +43,9 @@ or [![Buy me a coffee via Grab?](https://img.shields.io/badge/-Buy%20me%20a%20co
     ```
 1. The outputs should be in the `./output` directory.
 
-### Getting videos
+### Getting videos (Old method, or for non-public videos)
 \* You may need to be a little quick on this.  
-1. __[Method 1, old]__ Continuing from previous section (Getting Course Information), click on the first video in the course. A new tab should open.  
-__[Method 2, untested for resiliency]__ Continuing from previous section (Getting Course Information), copy the first URL and paste it into your browser. Incognito mode recommended.
+1. Continuing from previous section (Getting Course Information), click on the first video in the course. A new tab should open.  
 1. Open Google Chrome's Developer Tools in the new tab and navigate to the network tab. 
 1. In the filter box, type in `viewclip`. There should be 1 result.
 1. Clear the log and refresh the page.
@@ -57,6 +62,23 @@ __[Method 2, untested for resiliency]__ Continuing from previous section (Gettin
 1. An output of all the video URLs will be in the `./output/URLs.json` file, and if you specified the `--videoDownload` parameter, videos will be downloaded alongside the subtitle files.
 1. <strike> Copy the links and paste into any downloader (or browser window) to download the videos. Do note that you would need to manually rename the files.</strike>
 
+## Brief (New Method)
+1. Log in to your PluralSight account and navigate to your desired course.
+1. Open Google Chrome's Developer Tools. (Pressing F12 is a god way to do so.)
+1. Navigate to the "network" tab and:
+    - Check `preserve log` and `disable cache`.
+    - Clear the current captured data.
+1. In the course page, refresh the page with the description. You should see stuff going in Developer Tools network tab. You have now captured data for course information output.
+1. You may now export the HAL file and close the Developer Tool window.
+1. To generate video URLs and course information, run the program with the following command: 
+    ```
+    node ./main.js --new path_to_HAL_file
+    ```
+1. Or, if you want to download the videos together, run the program with the following command:
+    ```
+    node ./main.js --new --videoDownload path_to_HAL_file
+    ```
+1. The outputs should be in the `./output` directory.
 
 ## Parameters
 ```
@@ -64,7 +86,7 @@ Usage: node ./main.js [params] path_to_HAL_file
 
         --help                  Displays this help message.
         --license               Outputs the license of this project. (GNU General Public License)
-        --new                   [TESTERS REQUIRED, FEATURE INCOMPLETE] Uses the new "CourseInfo-Only" methodology to facilitate for full course downloads. Not recommended for large courses.
+        --new                   [TESTERS REQUIRED] Uses the new "CourseInfo-Only" methodology to facilitate for full course downloads. Not recommended for large courses.
         --noSubs                Disables output of subtitles.
         --noInfo                Disables output of course information.
         --noBB                  Disables output of BB code.
