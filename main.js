@@ -1,7 +1,7 @@
 const courseInfo = require("./functions/courseinfo.js");
 const paramProcessor = require("./functions/paramProcessor.js");
 const video = require("./functions/video.js");
-const filelister = require("./functions/filelister.js");
+const filelister = require("./functions/fileLister.js");
 const func = require("./functions/functions.js");
 const exec = require("child_process").execSync;
 const fs = require("fs");
@@ -131,7 +131,6 @@ if (params.videoDownload /* || params.newMethod*/) {
         console.log("Wait complete.");
         const URLs = JSON.parse(fs.readFileSync("./output/urls.json", "utf-8"));
         const fileNames = JSON.parse(fs.readFileSync("./output/videoList.json", "utf-8"));
-        const key = "11B42C394C6217C5135BF7E4AC23E";
 
         if ((URLs.length == fileNames.length) || params.noSizeCheck) {
             if (params.noSizeCheck) {
@@ -147,8 +146,8 @@ if (params.videoDownload /* || params.newMethod*/) {
             }
 
             URLs.forEach(async (package, index) => {
-                    console.log("\n\n=============\nCURL-ing for " + fileNames[index].replace(key, "") + "\n");
-                const videoFileName = filelister.replaceForPrimaries(fileNames[index], key, ".mp4");
+                console.log("\n\n=============\nCURL-ing for " + fileNames[index].replace(func.key, "") + "\n");
+                const videoFileName = filelister.replaceForPrimaries(fileNames[index], func.key, ".mp4");
                 func.curl(URLs[index], videoFileName, 5);
 
                     if (!params.noSubs) {
@@ -158,13 +157,14 @@ if (params.videoDownload /* || params.newMethod*/) {
 
                             let subFileName;
                             if (language == "en") {
-                                subFileName = fileNames[index].replace(key, "") + ".vtt";
+                            subFileName = filelister.replaceForPrimaries(fileNames[index], func.key, ".vtt");
                             } else {
-                                if (!fs.existsSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"))) {
-                                    fs.mkdirSync(fileNames[index].replace(/11B42C394C6217C5135BF7E4AC23E.*/g, "/otherSubs"));
-                                }
-                                subFileName = fileNames[index].replace(key, "/otherSubs") + "_" + language + ".vtt";
+                            const subOutPath = fileNames[index].replace(new RegExp(func.key + ".*", "g"), "/otherSubs");
+                            if (!fs.existsSync(subOutPath)) {
+                                fs.mkdirSync(subOutPath);
                             }
+                            subFileName = fileNames[index].replace(func.key, "/otherSubs") + "_" + language + ".vtt";
+                        }
                         func.curl(subURL, subFileName, 5);
 
                         })

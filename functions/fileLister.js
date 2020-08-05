@@ -42,7 +42,7 @@ function generatePaths(courseInfo) {
             }
 
             // Add key to folder name.
-            folderName += "11B42C394C6217C5135BF7E4AC23E";
+            folderName += func.key;
 
             module.clips.forEach((clip, fileIndex) => {
                 // Generate file name
@@ -78,4 +78,14 @@ module.exports.generatePaths = (courseInfo) => {
         });
 
     });
+}
+
+/**
+ * 
+ * @param {string} sourceText Source of the text to be altered.
+ * @param {string} key Key to replace.
+ * @param {string} extension Text to place after the generated text. ".mp4" for videos, ".vtt" for subtitles.
+ */
+module.exports.replaceForPrimaries = (sourceText, key, extension) => {
+    return sourceText.replace(key, "").concat(extension);
 }
