@@ -1,5 +1,7 @@
 const https = require('https');
 const func = require("./functions");
+const filelister = require("./fileLister.js");
+const fs = require("fs");
 
 /**
  * 
@@ -110,14 +112,19 @@ function newGetURL(clipID, moduleTitle, clipTitle, moduleIndex, clipIndex, total
                     reject(myRes.error.message);
                 } else {
                     console.log(
-                        "VIDEOURL: Obtained =>" + 
-                        "[" + totalClipIndex + "] - " + 
-                        "[" + moduleIndex + "] " + 
-                        moduleTitle + 
-                        ":" + 
+                        "VIDEOURL: Obtained =>" +
+                        "[" + totalClipIndex + "] - " +
+                        "[" + moduleIndex + "] " +
+                        moduleTitle +
+                        ":" +
                         " [" + clipIndex + "] " +
                         clipTitle);
-                    resolve(myRes.urls[0].url);
+                    const returnValue = {
+                        "url": myRes.urls[0].url,
+                        "clipID": clipID,
+                        "ver": myRes.version
+                    }
+                    resolve(returnValue);
                 }
             });
 
@@ -170,4 +177,39 @@ module.exports.newURL = (courseInfo) => {
         });
 
     });
+}
+
+/**
+ * Download the videos and subtitles to the pre-specified paths.
+ * @param {string[]} links Link array of the files to be downloaded.
+ * @param {string[]} outputPaths Output paths array of the files to be downloaded.
+ * @param {string[]} languages If there are subtitles to be downloaded.
+ */
+module.exports.download = (links, outputPaths, languages) => {
+    links.forEach(async (package, index) => {
+        console.log("\n\n=============\nCURL-ing for " + outputPaths[index].replace(func.key, "") + "\n");
+        const videoFileName = filelister.replaceForPrimaries(outputPaths[index], func.key, ".mp4");
+        func.curl(links[index].url, videoFileName, 5);
+
+        if (languages != []) {
+            languages.forEach((language) => {
+                const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.clipID + "/" + package.ver + "\/" + language + "\/";
+                console.log(subURL);
+
+                let subFileName;
+                if (language == "en") {
+                    subFileName = filelister.replaceForPrimaries(outputPaths[index], func.key, ".vtt");
+                } else {
+                    const subOutPath = outputPaths[index].replace(new RegExp(func.key + ".*", "g"), "/otherSubs");
+                    if (!fs.existsSync(subOutPath)) {
+                        fs.mkdirSync(subOutPath);
+                    }
+                    subFileName = outputPaths[index].replace(func.key, "/otherSubs") + "_" + language + ".vtt";
+                }
+                func.curl(subURL, subFileName, 5);
+
+            })
+        }
+
+    })
 }

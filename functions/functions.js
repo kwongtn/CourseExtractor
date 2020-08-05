@@ -1,6 +1,8 @@
 const myKey = "11B42C394C6217C5135BF7E4AC23E"
 module.exports.key = myKey;
 
+const exec = require("child_process");
+
 /**
  * Converts a number to a string with preceeding zeroes.
  * @param {number} num The number to convert

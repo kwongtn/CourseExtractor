@@ -3,7 +3,6 @@ const paramProcessor = require("./functions/paramProcessor.js");
 const video = require("./functions/video.js");
 const filelister = require("./functions/fileLister.js");
 const func = require("./functions/functions.js");
-const exec = require("child_process").execSync;
 const fs = require("fs");
 
 var myJSON;
@@ -88,17 +87,37 @@ if (obtainedCourseInfo) {
 
 if (params.newMethod) {
     video.newURL(thisCourseInfo).then((links) => {
-        try {
+        return new Promise((resolve, reject) => {
             try {
-                fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
-                console.log("Completed new url output.");
+                try {
+                    fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
+                    console.log("Completed new url output.");
+                    resolve(links);
+                } catch (err) {
+                    reject(err.message);
+                }
             } catch (err) {
-                console.log(err.message);
+                console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
+                console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+                reject(err.message);
             }
-        } catch (err) {
-            console.log(err.message);
-            console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
-            console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
+
+        })
+    }).then((links) => {
+        /**
+         * It is assumed that as the server returns results of all the requests, the output of paths has already been done.
+         * Comparing localIO (outputPaths) and multiple network requests (links)
+         * */
+        if (params.videoDownload && (links.length == outputPaths.length)) {
+            video.download(links, outputPaths, languages);
+
+        } else {
+            throw new Error("No. of output paths ("
+                + outputPaths.length
+                + ") does not match the no. of links ("
+                + links.length
+                + ") "
+            );
         }
 
     });
@@ -125,7 +144,7 @@ if (params.newMethod) {
 }
 
 // Video download
-if (params.videoDownload /* || params.newMethod*/) {
+if (!params.newMethod && params.videoDownload) {
     console.log("Waiting for 1 sec timeout...");
     setTimeout(() => {
         console.log("Wait complete.");
@@ -150,15 +169,15 @@ if (params.videoDownload /* || params.newMethod*/) {
                 const videoFileName = filelister.replaceForPrimaries(fileNames[index], func.key, ".mp4");
                 func.curl(URLs[index], videoFileName, 5);
 
-                    if (!params.noSubs) {
-                        languages.forEach((language) => {
-                            const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
-                            console.log(subURL);
+                if (!params.noSubs) {
+                    languages.forEach((language) => {
+                        const subURL = "https://app.pluralsight.com/transcript/api/v1/caption/webvtt/" + package.videoID + "/" + package.version + "\/" + language + "\/";
+                        console.log(subURL);
 
-                            let subFileName;
-                            if (language == "en") {
+                        let subFileName;
+                        if (language == "en") {
                             subFileName = filelister.replaceForPrimaries(fileNames[index], func.key, ".vtt");
-                            } else {
+                        } else {
                             const subOutPath = fileNames[index].replace(new RegExp(func.key + ".*", "g"), "/otherSubs");
                             if (!fs.existsSync(subOutPath)) {
                                 fs.mkdirSync(subOutPath);
@@ -167,8 +186,8 @@ if (params.videoDownload /* || params.newMethod*/) {
                         }
                         func.curl(subURL, subFileName, 5);
 
-                        })
-                    }
+                    })
+                }
 
             })
         } else {
