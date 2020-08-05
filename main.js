@@ -35,12 +35,11 @@ let thisCourseInfo = {};
 myJSON.log.entries.forEach((entry) => {
     if (searchString.test(entry.request.url)) {
         thisCourseInfo = JSON.parse(entry.response.content.text);
+        fs.writeFileSync("./output/courseInfo.json", JSON.stringify(thisCourseInfo, null, 2));
         obtainedCourseInfo = true;
     }
 
 });
-
-fs.writeFileSync("./output/courseInfo.json", JSON.stringify(thisCourseInfo, null, 2));
 
 // Read the subtitle languages
 let languages;
@@ -50,10 +49,13 @@ if (fs.existsSync("./output/subLanguages.json")) {
     languages = ["en"];
 }
 
+let outputPaths;
 if (obtainedCourseInfo) {
     // Generate video list
     if (!params.videoDownload) {
-        filelister.generatePaths(thisCourseInfo);
+        filelister.generatePaths(thisCourseInfo).then((outPath) => {
+            outputPaths = outPath;
+        });
     }
 
     // Generate and write courseInfo to output
