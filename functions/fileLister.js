@@ -2,12 +2,17 @@ const fs = require('fs');
 const converter = require('./converter.js');
 const func = require('./functions.js');
 
+/**
+ * Sanitizes file name in accordance to the windows filesytem format.
+ * @param {string} fileName Filename to be sanitized.
+ * @return {string}
+ */
 function fileNameSanitizer(fileName) {
     return fileName
         .replace(/\?/g, "")
         .replace(/\:/g, "-")
         .replace(/\®/g, "")
-        .replace(/\//g, "")
+        .replace(/\//g, "-")
         .replace(/\\/g, "");
 }
 
@@ -17,7 +22,7 @@ function generatePaths(courseInfo) {
         await courseInfo.modules.forEach((module, index) => {
             // Output transcript based on folder
             var courseIndex = ++index;
-            var folderName = ".\/output\/" + fileNameSanitizer(courseInfo.title) + "\/";
+            var folderName = ".\/output\/" + fileNameSanitizer(courseInfo.title).trimRight() + "\/";
 
             // Create course output directory if it doesn't exist
             if (!fs.existsSync(folderName)) {

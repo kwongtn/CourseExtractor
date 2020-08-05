@@ -144,9 +144,12 @@ function newGetURL(clipID, moduleTitle, clipTitle, moduleIndex, clipIndex, total
                 "versionId": ""
             });
 
-        req.write(postData);
+        setTimeout(() => {
+            req.write(postData);
+    
+            req.end();
 
-        req.end();
+        }, 1000);
 
     });
 }
