@@ -8,7 +8,14 @@ const func = require('./functions.js');
  * @return {string}
  */
 function fileNameSanitizer(fileName) {
+    if (fileName.endsWith(".") || fileName.endsWith("\s")) {
+        fileName = fileName.substring(0, fileName.length - 1);
+    }
+
     return fileName
+        .replace(/I\.T/g, "IT")
+        .replace(/A\.I/g, "AI")
+        .replace(/\"/g, "\'")
         .replace(/\?/g, "")
         .replace(/\:/g, "-")
         .replace(/\®/g, "")
