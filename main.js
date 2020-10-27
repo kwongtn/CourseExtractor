@@ -88,40 +88,43 @@ if (obtainedCourseInfo) {
 }
 
 if (params.newMethod) {
-    video.newURL(thisCourseInfo).then((links) => {
-        return new Promise((resolve, reject) => {
-            try {
+    filelister.generatePaths(thisCourseInfo).then((outPath) => {
+        video.newURL(thisCourseInfo).then((links) => {
+            return new Promise((resolve, reject) => {
                 try {
-                    fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
-                    console.log("Completed new url output.");
-                    resolve(links);
+                    try {
+                        fs.writeFileSync("./output/urls.json", JSON.stringify(links, null, 2));
+                        console.log("Completed new url output.");
+                        console.log(outPath);
+                        resolve(links);
+                    } catch (err) {
+                        reject(err.message);
+                    }
                 } catch (err) {
+                    console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
+                    console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
                     reject(err.message);
                 }
-            } catch (err) {
-                console.log("If you see this its probably because the HAR file you provided does not have video URLs, or that the format has changed.");
-                console.log("If you are sure that the format has changed, please attach your HAR file and open an issue here: https://github.com/kwongtn/CourseExtractor/issues");
-                reject(err.message);
-            }
 
-        })
-    }).then((links) => {
-        /**
-         * It is assumed that as the server returns results of all the requests, the output of paths has already been done.
-         * Comparing localIO (outputPaths) and multiple network requests (links)
-         * */
-        if (params.videoDownload && (links.length == outputPaths.length)) {
-            video.download(links, outputPaths, languages);
+            })
+        }).then((links) => {
+            /**
+             * It is assumed that as the server returns results of all the requests, the output of paths has already been done.
+             * Comparing localIO (outPath) and multiple network requests (links)
+             * */
+            video.download(links, outPath, languages);
+            // if (params.videoDownload && (links.length == outPath.length)) {
+            // 
+            // } else {
+            //     throw new Error("No. of output paths ("
+            //         + outPath.length
+            //         + ") does not match the no. of links ("
+            //         + links.length
+            //         + ") "
+            //     );
+            // }
 
-        } else {
-            throw new Error("No. of output paths ("
-                + outputPaths.length
-                + ") does not match the no. of links ("
-                + links.length
-                + ") "
-            );
-        }
-
+        });
     });
 
     // Generate and write video URLs to output
